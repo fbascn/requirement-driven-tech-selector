@@ -1,0 +1,282 @@
+{
+  "id": "quorum",
+  "label": "Quorum",
+  "values": {
+    "ps_throughput": "MID",
+    "ps_scalability": "LOW",
+    "eco_baseline_footprint": "HIGH",
+    "eco_variable_transaction_cost": "LOW",
+    "eco_storage_footprint": "MID",
+    "rci_tamper_evidence_auditability": "HIGH",
+    "rci_finality_rollback_resistance": "HIGH",
+    "rci_write_availability_fault_tolerance": "HIGH",
+    "ags_control_distribution_governance": "MID",
+    "ags_identity_access_governance": "MID",
+    "ags_collusion_resilience": "MID"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 272,
+      "unit": "EUR/month",
+      "class": "HIGH",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 16,
+        "ram_gb": null,
+        "storage_gb": 400
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model.",
+      "source": "Framework cost model applied to Quorum Minimum Correctness Configuration (4 IBFT validator nodes)",
+      "source_url": "https://docs.goquorum.consensys.net/"
+    },
+    "ps_throughput": {
+      "value": 500,
+      "unit": "TPS",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "estimation_note": "Conservative technology-level estimate for Quorum IBFT with 4 validators. Real performance varies with block parameters, hardware, network conditions and workload composition.",
+      "source": "GoQuorum IBFT consensus documentation and PoA comparison",
+      "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0.0,
+      "unit": "EUR/transaction",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "GoQuorum free gas network documentation; gas price is zero by default",
+      "source_url": "https://docs.goquorum.consensys.io/concepts/free-gas-network"
+    },
+    "eco_storage_footprint": {
+      "value": 400,
+      "unit": "GB",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "source": "Framework baseline storage assumption for Quorum MCC with full state replication across 4 validators",
+      "source_url": "https://docs.goquorum.consensys.net/"
+    },
+    "ps_scalability": {
+      "value": 0.25,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 1,
+          "motivation": "Independent transactions can be processed concurrently at execution level, even though final ordering remains global.",
+          "source": "GoQuorum Ethereum-compatible execution model",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/architecture"
+        },
+        "horizontal_partitioning": {
+          "value": 0,
+          "motivation": "The MCC assumes a single globally replicated ledger across all validator nodes and excludes privacy-layer partitioning.",
+          "source": "GoQuorum public transaction model",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/privacy/private-and-public"
+        },
+        "absence_of_global_serialization": {
+          "value": 0,
+          "motivation": "IBFT requires global block ordering and serialized ledger progression.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        },
+        "scalable_coordination_model": {
+          "value": 0,
+          "motivation": "IBFT requires coordinated validator communication and voting, which introduces structural coordination overhead rather than elastic coordination.",
+          "source": "GoQuorum PoA consensus comparison",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        }
+      },
+      "source": "GoQuorum IBFT architecture and global consensus model",
+      "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "Quorum maintains blockchain history as an append-only sequence of blocks.",
+          "source": "GoQuorum blockchain basics",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/blockchain-basics/blockchain-components"
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Blocks and transactions are linked through standard Ethereum-style cryptographic hashing and block references.",
+          "source": "GoQuorum genesis and blockchain structure documentation",
+          "source_url": "https://docs.goquorum.consensys.io/reference/genesis"
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions are signed using Ethereum account cryptography before acceptance into the ledger.",
+          "source": "GoQuorum network and chain ID documentation",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/network-and-chain-id"
+        },
+        "independent_integrity_verification": {
+          "value": 1,
+          "motivation": "Each validator maintains the replicated blockchain state and can independently verify ledger integrity under the common protocol rules.",
+          "source": "GoQuorum validator-based PoA documentation",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        }
+      },
+      "source": "GoQuorum Ethereum-based replicated blockchain model",
+      "source_url": "https://docs.goquorum.consensys.io/concepts/blockchain-basics/blockchain-components"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "deterministic_ibft",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 1,
+          "motivation": "IBFT provides immediate finality; valid committed blocks are finalized without fork competition.",
+          "source": "GoQuorum PoA consensus comparison",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 1,
+          "motivation": "Block commitment requires validator agreement under the IBFT protocol rather than unilateral acceptance.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "No single validator can unilaterally reorganize finalized chain history in the IBFT model.",
+          "source": "GoQuorum PoA consensus comparison",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        }
+      },
+      "source": "GoQuorum IBFT finality model",
+      "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "configuration_note": "Score refers strictly to the native 4-validator IBFT model and does not include geographic redundancy or enterprise HA extensions.",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 1,
+          "motivation": "Write progression does not depend on a single database writer; validator leadership rotates within the IBFT protocol.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        },
+        "quorum_based_write_continuation": {
+          "value": 1,
+          "motivation": "The network can continue processing blocks as long as the protocol quorum is maintained.",
+          "source": "GoQuorum PoA consensus comparison",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 1,
+          "motivation": "IBFT is designed to continue after validator failures within tolerance bounds through protocol rounds and validator coordination.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        },
+        "multi_node_write_survivability": {
+          "value": 1,
+          "motivation": "All validator nodes replicate the blockchain state, so write capability survives single-node loss in the 4-validator native model.",
+          "source": "GoQuorum validator node management documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/manage/add-nodes"
+        }
+      },
+      "source": "GoQuorum IBFT quorum-based write continuation model",
+      "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+    },
+    "ags_control_distribution_governance": {
+      "value": 0.5,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 1,
+          "motivation": "Ledger progression and validator-set changes are not structurally unilateral under IBFT validator governance.",
+          "source": "GoQuorum PoA consensus comparison",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 1,
+          "motivation": "Validation is structurally multi-validator under the IBFT protocol.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        },
+        "validator_admission_independence": {
+          "value": 0,
+          "motivation": "Quorum is permissioned; validator admission is governed by existing network participants and permissioning rules.",
+          "source": "GoQuorum permissioning overview",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/permissions-overview"
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 0,
+          "motivation": "The validator set is explicitly governed and managed rather than open and permissionless.",
+          "source": "GoQuorum add nodes / validator management documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/manage/add-nodes"
+        }
+      },
+      "source": "GoQuorum permissioned validator governance model",
+      "source_url": "https://docs.goquorum.consensys.io/concepts/permissions-overview"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 1,
+          "motivation": "GoQuorum supports node and account permissioning with differentiated roles and access controls.",
+          "source": "GoQuorum permissioning overview",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/permissions-overview"
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 1,
+          "motivation": "Enhanced permissioning supports organization, account and role management, including approval workflows.",
+          "source": "GoQuorum permissioning API methods",
+          "source_url": "https://docs.goquorum.consensys.io/reference/api-methods"
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "Identity and access governance remain consortium-administered rather than structurally independent from network authorities.",
+          "source": "GoQuorum permissioning overview",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/permissions-overview"
+        }
+      },
+      "source": "GoQuorum account and permissioning model",
+      "source_url": "https://docs.goquorum.consensys.io/concepts/permissions-overview"
+    },
+    "ags_collusion_resilience": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "configuration_note": "Specific to the native 4-validator IBFT model; score reflects tolerance of one faulty validator and the need for compromise beyond a single node.",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 1,
+          "motivation": "A single validator is insufficient to compromise IBFT consensus in the 4-validator model.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        },
+        "majority_compromise_required": {
+          "value": 1,
+          "motivation": "Compromise requires control beyond one validator and therefore exceeds unilateral failure.",
+          "source": "GoQuorum PoA consensus comparison",
+          "source_url": "https://docs.goquorum.consensys.io/concepts/consensus/comparing-poa"
+        },
+        "supermajority_compromise_required": {
+          "value": 0,
+          "motivation": "The framework does not classify the 4-validator IBFT case as requiring a supermajority-compromise threshold at the highest resilience level.",
+          "source": "GoQuorum IBFT consensus documentation",
+          "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+        }
+      },
+      "source": "GoQuorum IBFT fault tolerance properties operationalized in framework form",
+      "source_url": "https://docs.goquorum.consensys.io/configure-and-manage/configure/consensus-protocols/ibft"
+    }
+  }
+}

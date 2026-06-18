@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tech-Selector Demo</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap" id="topNav"></div>
+    <div class="wrap">
+      <h1 id="pageTitle"></h1>
+      <p class="muted" id="pageSubtitle"></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h2 id="homeH2"></h2>
+      <p class="muted" id="homeP"></p>
+      <div class="actions">
+        <a class="pill" href="criteria.html">Criteria</a>
+        <a class="pill" href="questions.html">Questions</a>
+        <a class="pill" href="technologies.html">Technologies</a>
+        <a class="pill" href="run.html">Run</a>
+      </div>
+    </div>
+
+    <script type="module">
+      import { setTitle } from "./app/render.js";
+      import { t } from "./app/i18n.js";
+
+      setTitle("pageTitle", { en: "Tech-Selector Demo", it: "Demo Tech-Selector" });
+      document.getElementById("pageSubtitle").textContent = t({
+        en: "Select a page. Language applies across the whole demo.",
+        it: "Seleziona una pagina. La lingua si applica a tutta la demo."
+      });
+
+      document.getElementById("homeH2").textContent = t({ en: "Pages", it: "Pagine" });
+      document.getElementById("homeP").textContent = t({
+        en: "Criteria = definition & parameterization. Questions = user elicitation (with weights). Technologies = benchmark levels. Run = compute ranking + radar/bar. Heatmap = matrix view.",
+        it: "Criteri = definizione e parametrizzazione. Domande = elicitation utente (con pesi). Tecnologie = livelli benchmark. Esecuzione = ranking + radar/bar. Heatmap = vista a matrice."
+      });
+    </script>
+  </main>
+
+  <footer class="wrap tiny muted">
+    <div>Tech-Selector Demo</div>
+  </footer>
+
+  <script type="module">
+    import { nav } from "./app/render.js";
+    import { attachLangSelector } from "./app/i18n.js";
+
+    document.getElementById("topNav").appendChild(nav("index.html"));
+    if (document.getElementById("langSelect")) attachLangSelector("langSelect");
+  </script>
+</body>
+</html>

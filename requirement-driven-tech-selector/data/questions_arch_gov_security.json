@@ -1,0 +1,97 @@
+{
+  "macro_area": {
+    "id": "arch_gov_security",
+    "label_en": "Architecture, Governance & Security",
+    "label_it": "Architettura, Governance e Sicurezza"
+  },
+  "questions": [
+    {
+      "criterion_id": "ags_control_distribution_governance",
+      "question_it": "Quale livello di distribuzione del controllo e della validazione è richiesto per il sistema?",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Controllo centralizzato",
+          "label_en": "Centralized control",
+          "description_it": "È richiesto o accettabile che una singola organizzazione controlli il sistema. Tipico di sistemi interni o ambienti con piena fiducia in un operatore unico.",
+          "description_en": "It is acceptable (or required) that a single organization controls the system. Typical of internal systems or environments with full trust in one operator."
+        },
+        {
+          "level": "MID",
+          "label_it": "Controllo condiviso",
+          "label_en": "Shared control",
+          "description_it": "Il controllo deve essere condiviso tra più organizzazioni selezionate. Tipico di consorzi, partner o ambienti multi-organizzazione con fiducia parziale.",
+          "description_en": "Control must be shared among selected organizations. Typical of consortia, partners, or multi-organization environments with partial trust."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Controllo distribuito",
+          "label_en": "Distributed control",
+          "description_it": "Il controllo non deve dipendere da una singola organizzazione. È richiesto che la validazione sia distribuita tra entità indipendenti.",
+          "description_en": "Control must not depend on a single organization. Validation is required to be distributed across independent entities."
+        }
+      ],
+      "id": "ags_control_distribution_governance_req",
+      "question_en": "What level of control and validation distribution is required for the system?"
+    },
+    {
+      "criterion_id": "ags_identity_access_governance",
+      "question_it": "Quale livello di gestione strutturata delle identità e dei permessi è richiesto?",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Gestione non strutturata",
+          "label_en": "Unstructured management",
+          "description_it": "Non è necessario che il sistema includa meccanismi nativi per la gestione di identità e permessi. Tipico di sistemi con pochi utenti o gestione operativa esterna.",
+          "description_en": "No native mechanisms for identity and permission management are required. Typical for few-user systems or when managed externally."
+        },
+        {
+          "level": "MID",
+          "label_it": "Gestione strutturata centralizzata",
+          "label_en": "Centralized structured management",
+          "description_it": "È necessario poter definire identità e permessi, anche se gestiti da un’autorità centrale.",
+          "description_en": "You need to define identities and permissions, even if managed by a central authority."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Gestione strutturata distribuita",
+          "label_en": "Distributed structured management",
+          "description_it": "È richiesto che identità e permessi possano essere gestiti in modo strutturale e distribuito tra più organizzazioni.",
+          "description_en": "Identities and permissions must be managed structurally and distributed across multiple organizations."
+        }
+      ],
+      "id": "ags_identity_access_governance_req",
+      "question_en": "What level of structured identity and permission management is required?"
+    },
+    {
+      "criterion_id": "ags_collusion_resilience",
+      "question_it": "Quale livello di resistenza alla compromissione o collusione è richiesto per il sistema?",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Resistenza non critica",
+          "label_en": "Not critical",
+          "description_it": "È accettabile che il sistema possa essere compromesso da un singolo attore privilegiato. Tipico di ambienti con fiducia elevata in un’autorità centrale.",
+          "description_en": "It is acceptable that a single privileged actor could compromise the system. Typical when there is high trust in a central authority."
+        },
+        {
+          "level": "MID",
+          "label_it": "Resistenza importante",
+          "label_en": "Important",
+          "description_it": "È richiesto che la compromissione richieda la collusione di più attori. Il sistema non deve dipendere da un singolo soggetto.",
+          "description_en": "Compromise should require collusion among multiple actors. The system must not depend on a single party."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Resistenza essenziale",
+          "label_en": "Essential",
+          "description_it": "È richiesto che la compromissione richieda collusione su larga scala. Il sistema deve essere strutturalmente resistente a manipolazioni anche in contesti a bassa fiducia.",
+          "description_en": "Compromise must require large-scale collusion. The system must be structurally resistant to manipulation even in low-trust contexts."
+        }
+      ],
+      "id": "ags_collusion_resilience_req",
+      "question_en": "What level of resistance to compromise or collusion is required for the system?"
+    }
+  ],
+  "schema_version": "1.1"
+}

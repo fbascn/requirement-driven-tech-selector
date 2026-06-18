@@ -1,0 +1,259 @@
+{
+  "id": "corda",
+  "label": "Corda",
+  "values": {
+    "ps_throughput": "MID",
+    "ps_scalability": "MID",
+    "eco_baseline_footprint": "MID",
+    "eco_variable_transaction_cost": "LOW",
+    "eco_storage_footprint": "LOW",
+    "rci_tamper_evidence_auditability": "MID",
+    "rci_finality_rollback_resistance": "HIGH",
+    "rci_write_availability_fault_tolerance": "LOW",
+    "ags_control_distribution_governance": "LOW",
+    "ags_identity_access_governance": "MID",
+    "ags_collusion_resilience": "LOW"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 64.0,
+      "unit": "EUR/month",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 4,
+        "ram_gb": null,
+        "storage_gb": 50
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model.",
+      "source": "Framework cost model applied to Corda Minimum Correctness Configuration (2 nodes + 1 single notary node)",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/"
+    },
+    "ps_throughput": {
+      "value": 300,
+      "unit": "TPS",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "estimation_note": "Conservative estimate for Corda in a minimal deployment with single notary. Actual performance varies significantly with notary topology, flow design and hardware.",
+      "source": "R3, Corda Enterprise Performance Results",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.8/enterprise/performance-testing/performance-results.html"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0.0,
+      "unit": "EUR/transaction",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "R3 Corda documentation – absence of native protocol transaction fee",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+    },
+    "eco_storage_footprint": {
+      "value": 50,
+      "unit": "GB",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "Framework baseline storage assumption for Corda MCC",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/"
+    },
+    "ps_scalability": {
+      "value": 0.75,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 1,
+          "motivation": "Corda flows enable concurrent execution of independent transactions across nodes.",
+          "source": "R3, Flows documentation",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/flow-state-machines.html"
+        },
+        "horizontal_partitioning": {
+          "value": 1,
+          "motivation": "Data is shared only among involved parties, structurally partitioning state and communication.",
+          "source": "R3, Transactions documentation",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+        },
+        "absence_of_global_serialization": {
+          "value": 1,
+          "motivation": "Corda does not maintain a globally ordered ledger.",
+          "source": "R3, Corda architecture overview",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/open-source/overview.html"
+        },
+        "scalable_coordination_model": {
+          "value": 0,
+          "motivation": "The notary introduces a critical coordination point in the adopted baseline.",
+          "source": "R3, Notaries documentation",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        }
+      },
+      "source": "R3 Corda architecture and transaction model",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/open-source/overview.html"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 0.75,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "States are immutable and transaction chains are append-only between consumed and produced states.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Transactions reference inputs and outputs via cryptographic hashes.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions require digital signatures from the relevant parties.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+        },
+        "independent_integrity_verification": {
+          "value": 0,
+          "motivation": "Integrity verification is strong but not globally open; it is limited to involved or authorized parties.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/open-source/overview.html"
+        }
+      },
+      "source": "R3 Corda transaction model",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "deterministic_notary_based",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 1,
+          "motivation": "The notary guarantees uniqueness and prevents double-spend, making notarised transactions final.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 1,
+          "motivation": "Validity consensus involves the relevant parties through required signatures.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "No autonomous rollback exists after valid finalisation.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        }
+      },
+      "source": "R3 Corda notary and transaction finality model",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 0.25,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 1,
+          "motivation": "Multiple participant nodes can initiate transactions.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/flow-state-machines.html"
+        },
+        "quorum_based_write_continuation": {
+          "value": 0,
+          "motivation": "The Corda model does not universally impose quorum-based continuation for write availability across all native configurations.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 0,
+          "motivation": "Failure of the notary can block transaction progression in simple native topologies.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        },
+        "multi_node_write_survivability": {
+          "value": 0,
+          "motivation": "Write survivability is not structurally guaranteed without clustered notary deployment.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        }
+      },
+      "source": "R3 notary service documentation",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+    },
+    "ags_control_distribution_governance": {
+      "value": 0.25,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 0,
+          "motivation": "The notary retains a critical role in uniqueness validation.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 1,
+          "motivation": "Transactions require the involvement and signatures of the relevant parties.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-transactions.html"
+        },
+        "validator_admission_independence": {
+          "value": 0,
+          "motivation": "Access is permissioned and governed by the network.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/permissioning.html"
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 0,
+          "motivation": "Critical network roles are defined by permissioned governance.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/enterprise/network/corda-networks.html"
+        }
+      },
+      "source": "R3 Corda governance and network model",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/enterprise/network/corda-networks.html"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 1,
+          "motivation": "Corda uses X.509 certificates, strong identities and permissioning based on roles and network membership.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/permissioning.html"
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 1,
+          "motivation": "Identity issuance and lifecycle are part of the network membership model.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/enterprise/network/corda-networks.html"
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "Identity governance remains anchored to network operators, trust anchors and permissioned membership governance.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/permissioning.html"
+        }
+      },
+      "source": "R3 Corda identity and permissioning model",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/permissioning.html"
+    },
+    "ags_collusion_resilience": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 0,
+          "motivation": "In the simple native model, the notary can remain a critical compromise point for uniqueness enforcement.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        },
+        "majority_compromise_required": {
+          "value": 0,
+          "motivation": "The protocol does not impose a general majority threshold for compromise.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        },
+        "supermajority_compromise_required": {
+          "value": 0,
+          "motivation": "The protocol does not require a supermajority threshold.",
+          "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+        }
+      },
+      "source": "R3 Corda notary model",
+      "source_url": "https://docs.r3.com/en/platform/corda/4.10/community/key-concepts-notaries.html"
+    }
+  }
+}

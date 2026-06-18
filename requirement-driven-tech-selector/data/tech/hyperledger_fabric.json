@@ -1,0 +1,232 @@
+{
+  "id": "hyperledger_fabric",
+  "label": "Hyperledger Fabric",
+  "values": {
+    "ps_throughput": "MID",
+    "ps_scalability": "MID",
+    "eco_baseline_footprint": "MID",
+    "eco_variable_transaction_cost": "LOW",
+    "eco_storage_footprint": "LOW",
+    "rci_tamper_evidence_auditability": "HIGH",
+    "rci_finality_rollback_resistance": "MID",
+    "rci_write_availability_fault_tolerance": "MID",
+    "ags_control_distribution_governance": "MID",
+    "ags_identity_access_governance": "HIGH",
+    "ags_collusion_resilience": "MID"
+  },
+  "measurements": {
+    "ps_throughput": {
+      "value": 1000,
+      "unit": "TPS",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "motivation": "Conservative order-of-magnitude estimate aligned with the MCC (2 peers + 1 Raft orderer + 1 CA) and with official Hyperledger Fabric 2.5 benchmarks on logically similar but stronger hardware.",
+      "source": "LF Decentralized Trust, Benchmarking Hyperledger Fabric 2.5 Performance",
+      "source_url": "https://www.lfdecentralizedtrust.org/blog/2023/02/16/benchmarking-hyperledger-fabric-2-5-performance"
+    },
+    "ps_scalability": {
+      "value": 0.75,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 1,
+          "motivation": "The execute-order-validate model allows endorsement execution across peers without requiring all peers to execute all transactions."
+        },
+        "horizontal_partitioning": {
+          "value": 1,
+          "motivation": "Channels provide native logical partitioning of members, ledgers and transaction flows."
+        },
+        "absence_of_global_serialization": {
+          "value": 0,
+          "motivation": "Transactions remain strictly ordered within each channel."
+        },
+        "scalable_coordination_model": {
+          "value": 1,
+          "motivation": "The separation between execution, ordering and validation improves coordination scalability."
+        }
+      },
+      "source": "Hyperledger Fabric Documentation, Architecture and Ordering Service",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/whatis.html"
+    },
+    "eco_baseline_footprint": {
+      "value": 98,
+      "unit": "EUR/month",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 6,
+        "ram_gb": null,
+        "storage_gb": 100
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model.",
+      "motivation": "Calculated as (6 vCPU x 15) + (100 GB x 0.08) on the adopted MCC.",
+      "source": "Framework internal calculation based on mandated MCC",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0,
+      "unit": "EUR/transaction",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "motivation": "Hyperledger Fabric does not require a native cryptocurrency or protocol-level transaction fees for execution or consensus.",
+      "source": "Hyperledger Fabric documentation; protocol design (no native fee model)",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/"
+    },
+    "eco_storage_footprint": {
+      "value": 100,
+      "unit": "GB",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "motivation": "Baseline persistent storage assumed by the framework for the adopted MCC.",
+      "source": "Framework internal baseline",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "The ledger is an append-only block-structured transaction log."
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Blocks are cryptographically linked to previous blocks."
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions and endorsements are verified through signatures and valid certificates."
+        },
+        "independent_integrity_verification": {
+          "value": 1,
+          "motivation": "Each peer independently validates blocks and transactions before commit."
+        }
+      },
+      "source": "Hyperledger Fabric Documentation, Ledger and Validation Model",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/release-2.2/glossary.html"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 1,
+          "motivation": "Once committed, blocks and valid transactions are final and Fabric does not rely on forks."
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 0,
+          "motivation": "Multi-party endorsement is supported but not structurally mandatory in every chaincode and policy configuration."
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "The protocol does not provide unilateral rollback of validated committed history."
+        }
+      },
+      "source": "Hyperledger Fabric Documentation, Ordering Service and Endorsement Policies",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/orderer/ordering_service.html"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 0.75,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 0,
+          "motivation": "In the native Raft ordering model, write progression depends on an active ordering leader."
+        },
+        "quorum_based_write_continuation": {
+          "value": 1,
+          "motivation": "The native Raft ordering model allows continuation as long as the ordering cluster preserves quorum."
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 1,
+          "motivation": "Leader failover is part of the native ordering protocol and does not require structurally centralized manual intervention."
+        },
+        "multi_node_write_survivability": {
+          "value": 1,
+          "motivation": "In a native multi-orderer topology, loss of a single orderer does not structurally halt write progression."
+        }
+      },
+      "source": "Hyperledger Fabric Documentation, Ordering Service Planning",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/deployorderer/ordererplan.html"
+    },
+    "ags_control_distribution_governance": {
+      "value": 0.5,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 1,
+          "motivation": "Fabric is natively designed for consortium governance in which state control can be distributed across organizations through ordering, endorsement policies and channel governance."
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 0,
+          "motivation": "Multi-entity validation is natively supported but not universally enforced for every transaction and every configuration."
+        },
+        "validator_admission_independence": {
+          "value": 0,
+          "motivation": "Admission remains permissioned and depends on MSPs, certificates and explicit governance."
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 1,
+          "motivation": "The set of members, peers and orderers is not immutably fixed by the protocol and can be reconfigured through network governance."
+        }
+      },
+      "source": "Hyperledger Fabric Documentation, Governance and Ordering Service",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/orderer/ordering_service.html"
+    },
+    "ags_identity_access_governance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 1,
+          "motivation": "Fabric natively distinguishes roles, identities, certificates, peers, orderers, admins and policy/ACL structures."
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 1,
+          "motivation": "Fabric CA and MSP natively support registration, enrollment, renewal and revocation of identities."
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 1,
+          "motivation": "The Fabric model natively supports identity governance distributed across multiple organizations and MSP domains rather than depending structurally on a single authority."
+        }
+      },
+      "source": "Hyperledger Fabric CA Documentation",
+      "source_url": "https://hyperledger-fabric-ca.readthedocs.io/en/latest/users-guide.html"
+    },
+    "ags_collusion_resilience": {
+      "value": 0.33,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 1,
+          "motivation": "In native multi-organization Fabric models, a single entity is not structurally sufficient to compromise the system."
+        },
+        "majority_compromise_required": {
+          "value": 0,
+          "motivation": "Fabric does not universally require majority control of validation or decision power for every compromise scenario."
+        },
+        "supermajority_compromise_required": {
+          "value": 0,
+          "motivation": "The protocol does not impose a general supermajority compromise threshold."
+        }
+      },
+      "source": "Hyperledger Fabric Documentation, Endorsement Policies",
+      "source_url": "https://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html"
+    }
+  }
+}

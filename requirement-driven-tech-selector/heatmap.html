@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Heatmap</title>
+  <link rel="stylesheet" href="./styles.css" />
+
+  <style>
+    :root{
+      --hm-border:#e6e6e6;
+      --hm-head:#fafafa;
+      --hm-hover:#f6f7f9;
+      --hm-text:#111;
+      --hm-cell: 72px;
+    }
+
+    #gridWrap { overflow:auto; }
+    #gridWrap { max-height: 70vh; border:1px solid var(--hm-border); border-radius:12px; }
+
+    table.heatmap{
+      border-collapse:separate;
+      border-spacing:0;
+      width:max-content;
+      min-width: 100%;
+      font-size: 13px;
+    }
+    table.heatmap th, table.heatmap td{
+      border-bottom:1px solid var(--hm-border);
+      border-right:1px solid var(--hm-border);
+      padding:10px 10px;
+      vertical-align:middle;
+      color: var(--hm-text);
+      white-space:nowrap;
+    }
+    table.heatmap th{
+      background: var(--hm-head);
+      position: sticky;
+      top:0;
+      z-index:2;
+      text-align:left;
+    }
+    table.heatmap th.sticky-left,
+    table.heatmap td.sticky-left{
+      position: sticky;
+      left:0;
+      z-index:3;
+      background: white;
+    }
+    table.heatmap th.sticky-left{
+      background: var(--hm-head);
+      z-index:4;
+    }
+
+    table.heatmap td{
+      min-width: var(--hm-cell);
+      text-align:center;
+    }
+    table.heatmap tr:hover td{
+      background: var(--hm-hover);
+    }
+    .cell{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      align-items:center;
+      justify-content:center;
+    }
+    .tiny2{ font-size: 11px; opacity: .75; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap" id="topNav"></div>
+    <div class="wrap">
+      <h1 id="pageTitle"></h1>
+      <p class="muted" id="pageSubtitle"></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <div class="card" style="margin-bottom:12px;">
+      <div class="controls">
+        <div style="min-width:260px;">
+          <div class="tiny muted" id="macroLbl"></div>
+          <select id="macroSelect"></select>
+        </div>
+        <div>
+          <div class="tiny muted" id="macroHint"></div>
+          <span class="badge" id="macroBadge">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="controls" style="align-items:center;">
+        <h2 style="margin:0;" id="hmTitle"></h2>
+        <div class="tiny muted" id="hmHelp"></div>
+      </div>
+
+      <div id="gridWrap" style="margin-top:12px;">
+        <div class="muted" id="empty">Caricamento…</div>
+        <div id="grid"></div>
+      </div>
+
+      <details style="margin-top:12px;">
+        <summary id="debugTitle">Debug</summary>
+        <pre id="debug" style="white-space:pre-wrap;"></pre>
+      </details>
+    </div>
+
+    <div id="err" class="card" style="display:none; margin-top:12px;">
+      <h2 id="errTitle"></h2>
+      <div class="tiny muted" id="errMsg"></div>
+      <pre id="errDetails" style="white-space:pre-wrap;"></pre>
+    </div>
+
+<script type="module">
+  import { MACROS, loadMacro } from "./app/loader.js";
+  import { attachLangSelector, getLang, t } from "./app/i18n.js";
+  import { nav, setTitle, criterionLabel } from "./app/render.js";
+  import { matchScore } from "./app/scoring.js";
+
+  document.getElementById("topNav").appendChild(nav("heatmap.html"));
+  attachLangSelector("langSelect");
+
+  const lang = getLang();
+
+  function showError(title, msg, details="") {
+    const errBox = document.getElementById("err");
+    errBox.style.display = "block";
+    document.getElementById("errTitle").textContent = title;
+    document.getElementById("errMsg").textContent = msg;
+    document.getElementById("errDetails").textContent = details;
+  }
+
+  function getParam(name, fallback = null) {
+    const u = new URL(window.location.href);
+    return u.searchParams.get(name) ?? fallback;
+  }
+  function setParam(name, value) {
+    const u = new URL(window.location.href);
+    u.searchParams.set(name, value);
+    window.location.href = u.toString();
+  }
+
+  setTitle("pageTitle", { en: "Heatmap", it: "Heatmap" });
+  document.getElementById("macroLbl").textContent = t({ en:"Macro-area", it:"Macro-area" });
+  document.getElementById("macroHint").textContent = t({ en:"URL parameter: macro", it:"Parametro URL: macro" });
+  document.getElementById("hmTitle").textContent = t({ en:"Compatibility heatmap", it:"Heatmap compatibilità" });
+  document.getElementById("hmHelp").textContent = t({
+    en:"Cells show per-criterion match (0–100) using your saved user profile for this macro.",
+    it:"Le celle mostrano il match per criterio (0–100) usando il profilo utente salvato per questa macro."
+  });
+
+  const allowedMacros = new Set(["performance","architecture","economic","reliability","overall"]);
+
+// Macro selector UI
+  const macroSelect = document.getElementById("macroSelect");
+  const macroBadge = document.getElementById("macroBadge");
+
+  const options = [
+    { id: "performance",   label: MACROS.performance?.label   || "Performance & Scalability" },
+    { id: "architecture",  label: MACROS.architecture?.label  || "Architecture, Governance and Security" },
+    { id: "economic",      label: MACROS.economic?.label      || "Economic Sustainability" },
+    { id: "reliability",   label: MACROS.reliability?.label   || "Reliability, Continuity & Integrity" },
+    { id: "overall",       label: t({ en:"Overall", it:"Complessivo" }) }
+  ];
+
+  for (const opt of options) {
+    const o = document.createElement("option");
+    o.value = opt.id;
+    o.textContent = opt.label;
+    macroSelect.appendChild(o);
+  }
+
+  const macroParam = getParam("macro", "performance");
+  const activeMacro = allowedMacros.has(macroParam) ? macroParam : "performance";
+  macroSelect.value = activeMacro;
+  macroBadge.textContent = activeMacro;
+  macroSelect.addEventListener("change", () => setParam("macro", macroSelect.value));
+
+  document.getElementById("pageSubtitle").textContent =
+    (activeMacro === "overall")
+      ? t({ en:"Overall (all macro-areas)", it:"Complessivo (tutte le macro-aree)" })
+      : (options.find(x => x.id === activeMacro)?.label || activeMacro);
+
+// helpers for user profile
+  const LEVEL_MAP = { LOW: 0, MID: 1, HIGH: 2 };
+
+  function normalizeDesiredValue(v) {
+    if (v === 0 || v === 1 || v === 2) return v;
+    if (typeof v === "string") {
+      const k = v.trim().toUpperCase();
+      if (k in LEVEL_MAP) return LEVEL_MAP[k];
+    }
+    return null;
+  }
+
+  function readUserProfileFor(criteriaObj, macroId) {
+    const key = (macroId === "overall")
+      ? "techSelector:userProfile:overall"
+      : `techSelector:userProfile:${macroId}`;
+
+    let user = null;
+    try {
+      user = JSON.parse(sessionStorage.getItem(key) || "null");
+    } catch {
+      user = null;
+    }
+
+    const desired = {};
+    const weight = {};
+
+    for (const c of (criteriaObj?.criteria || [])) {
+      const d = normalizeDesiredValue(user?.desired?.[c.id]);
+      desired[c.id] = (d === null) ? 1 : d; // default MID
+      const wRaw = Number(user?.weight?.[c.id]);
+      weight[c.id] = Number.isFinite(wRaw) ? Math.max(1, Math.min(5, wRaw)) : 3;
+    }
+    return { desired, weight, __key: key };
+  }
+
+  function mergeCriteria(packs) {
+    return { criteria: packs.flatMap(p => p.criteria.criteria) };
+  }
+
+  function mergeBenchmarks(packs) {
+    const byTech = new Map();
+    for (const p of packs) {
+      for (const tech of (p.benchmarks?.technologies || [])) {
+        const existing = byTech.get(tech.id) || { id: tech.id, label: tech.label, values: {} };
+        Object.assign(existing.values, tech.values || {});
+        existing.label = existing.label || tech.label;
+        byTech.set(tech.id, existing);
+      }
+    }
+    return { technologies: [...byTech.values()] };
+  }
+
+  function mergeUser(packs) {
+    const desired = {};
+    const weight = {};
+    for (const p of packs) {
+      const u = readUserProfileFor(p.criteria, p.id);
+      Object.assign(desired, u.desired);
+      Object.assign(weight, u.weight);
+    }
+    return { desired, weight };
+  }
+
+//rendering
+  function scoreToBg(s01) {
+    
+    const v = Math.round(255 - (120 * s01)); 
+    return `rgb(${v}, 255, ${v})`;
+  }
+
+  function buildHeatmap(criteriaObj, userObj, benchObj, badge="") {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.className = "heatmap";
+
+    const thead = document.createElement("thead");
+    const hr = document.createElement("tr");
+
+    const th0 = document.createElement("th");
+    th0.className = "sticky-left";
+    th0.textContent = `${t({en:"Technology", it:"Tecnologia"})}${badge ? ` (${badge})` : ""}`;
+    hr.appendChild(th0);
+
+    for (const c of criteriaObj.criteria) {
+      const th = document.createElement("th");
+      th.textContent = criterionLabel(c);
+      hr.appendChild(th);
+    }
+    thead.appendChild(hr);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    for (const tech of benchObj.technologies) {
+      const tr = document.createElement("tr");
+
+      const td0 = document.createElement("td");
+      td0.className = "sticky-left";
+      td0.innerHTML = `<b>${tech.label || tech.id}</b><div class="tiny2">${tech.id}</div>`;
+      tr.appendChild(td0);
+
+      for (const c of criteriaObj.criteria) {
+        const td = document.createElement("td");
+
+        const provided = tech.values?.[c.id];
+        const desired = userObj.desired?.[c.id];
+        const dir = (c.direction || c.type);
+
+        let s = 0;
+        try {
+          s = matchScore(provided, desired, dir);
+        } catch (e) {
+          throw new Error(
+            `[heatmap] Scoring failed: macro=${activeMacro} tech="${tech.id}" criterion="${c.id}" ` +
+            `provided=${provided} desired=${desired} dir=${dir} :: ${e?.message || e}`
+          );
+        }
+
+        td.style.background = scoreToBg(s);
+        td.innerHTML = `
+          <div class="cell">
+            <div class="badge">${Math.round(s*100)}</div>
+            <div class="tiny2">${dir}</div>
+          </div>
+        `;
+        tr.appendChild(td);
+      }
+
+      tbody.appendChild(tr);
+    }
+
+    table.appendChild(tbody);
+    grid.appendChild(table);
+  }
+
+//main load
+  try {
+    document.getElementById("empty").style.display = "block";
+
+    if (activeMacro === "overall") {
+      const ids = ["performance","architecture","economic","reliability"];
+      const packsRaw = await Promise.all(ids.map(id => loadMacro(id)));
+      const packs = packsRaw.map((p,i) => ({
+        id: ids[i],
+        criteria: p.criteria,
+        questions: p.questions,
+        benchmarks: p.benchmarks
+      }));
+
+      const mergedCriteria = mergeCriteria(packs);
+      const mergedBenchmarks = mergeBenchmarks(packs);
+      const mergedUser = mergeUser(packs);
+
+      buildHeatmap(mergedCriteria, mergedUser, mergedBenchmarks, "overall");
+      document.getElementById("debug").textContent = JSON.stringify({
+        mode: "overall",
+        userProfileKey: "techSelector:userProfile:overall",
+        criteriaCount: mergedCriteria.criteria.length,
+        techCount: mergedBenchmarks.technologies.length
+      }, null, 2);
+
+    } else {
+      const { criteria, benchmarks } = await loadMacro(activeMacro);
+      const user = readUserProfileFor(criteria, activeMacro);
+
+      buildHeatmap(criteria, user, benchmarks, activeMacro);
+      document.getElementById("debug").textContent = JSON.stringify({
+        mode: "single",
+        macro: activeMacro,
+        userProfileKey: user.__key,
+        criteriaCount: criteria.criteria.length,
+        techCount: benchmarks.technologies.length
+      }, null, 2);
+    }
+
+    document.getElementById("empty").style.display = "none";
+
+  } catch (err) {
+    showError(
+      t({en:"Heatmap failed", it:"Heatmap fallita"}),
+      String(err?.message || err),
+      String(err?.stack || err)
+    );
+  }
+
+</script>
+
+  </main>
+</body>
+</html>

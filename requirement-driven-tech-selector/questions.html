@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Questions</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap" id="topNav"></div>
+    <div class="wrap">
+      <h1 id="pageTitle"></h1>
+      <p class="muted" id="pageSubtitle"></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Macro selector -->
+    <div class="card" style="margin-bottom:12px;">
+      <div class="controls">
+        <div>
+          <div class="tiny muted" id="macroLbl"></div>
+          <select id="macroSelect"></select>
+        </div>
+        <div>
+          <div class="tiny muted" id="macroHint"></div>
+          <span class="badge" id="macroBadge">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="qH2"></h2>
+      <div id="out"></div>
+    </div>
+
+    <script type="module">
+      import { MACROS, loadMacro } from "./app/loader.js";
+      import { pick, t, getLang } from "./app/i18n.js";
+      import { setTitle, criterionLabel } from "./app/render.js";
+
+// Helpers: URL params
+
+      function getParam(name, fallback=null) {
+        const u = new URL(window.location.href);
+        return u.searchParams.get(name) ?? fallback;
+      }
+      function setParam(name, value) {
+        const u = new URL(window.location.href);
+        u.searchParams.set(name, value);
+        window.location.href = u.toString();
+      }
+
+// Page copy
+
+      setTitle("pageTitle", {en:"Questions", it:"Domande"});
+      document.getElementById("qH2").textContent = t({en:"User requirement elicitation", it:"Raccolta requisiti utente"});
+
+      document.getElementById("macroLbl").textContent = t({en:"Macro-area", it:"Macro-area"});
+      document.getElementById("macroHint").textContent = t({
+        en:"Choose which question set to display.",
+        it:"Scegli quali domande visualizzare."
+      });
+
+// Macro selector
+
+      const macroSelect = document.getElementById("macroSelect");
+      const macroBadge = document.getElementById("macroBadge");
+
+      const options = [
+        { id: "performance", label: t({ en: "Performance & Scalability", it: "Performance e Scalabilità" }) },
+        { id: "architecture", label: t({ en: "Architecture, Governance and Security", it: "Architettura, Governance e Sicurezza" }) },
+		{ id: "economic",    label: t({ en: "Economic Sustainability", it: "Sostenibilità economica" }) },
+        { id: "reliability", label: t({ en: "Reliability, Continuity and Integrity", it: "Affidabilità, Continuità e Integrità" }) }
+      ];
+
+      for (const opt of options) {
+        const o = document.createElement("option");
+        o.value = opt.id;
+        o.textContent = opt.label;
+        macroSelect.appendChild(o);
+      }
+
+      const activeMacro = getParam("macro", "performance");
+      macroSelect.value = activeMacro;
+      macroBadge.textContent = activeMacro;
+
+      macroSelect.addEventListener("change", () => setParam("macro", macroSelect.value));
+
+// Load macro + render
+
+      const out = document.getElementById("out");
+      const lang = getLang();
+
+      let loaded;
+      try {
+        loaded = await loadMacro(activeMacro);
+      } catch (err) {
+        document.getElementById("pageSubtitle").textContent = t({
+          en:"Error: could not load questions JSON for the selected macro-area.",
+          it:"Errore: impossibile caricare le domande JSON per la macro-area selezionata."
+        });
+        throw err;
+      }
+
+      const questions = loaded.questions;
+      const labelEn = questions?.macro_area?.label_en || MACROS[activeMacro]?.label || activeMacro;
+      const labelIt = questions?.macro_area?.label_it || labelEn;
+
+      document.getElementById("pageSubtitle").textContent = t({
+        en:`Macro-area: ${labelEn}`,
+        it:`Macro-area: ${labelIt}`
+      });
+
+      out.innerHTML = "";
+
+      if (!questions?.questions?.length) {
+        out.innerHTML = `<div class="muted">${t({en:"No questions found in JSON.", it:"Nessuna domanda trovata nel JSON."})}</div>`;
+      } else {
+        for (const q of questions.questions) {
+          const box = document.createElement("div");
+          box.className = "card";
+          box.style.marginTop = "12px";
+
+          const qText = pick(q, "question") || "";
+          const help = pick(q, "help") || "";
+          const critId = q.criterion_id || "";
+
+          box.innerHTML = `
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <b>${qText}</b>
+              <span class="badge">${critId}</span>
+            </div>
+            ${help ? `<div class="tiny muted" style="margin-top:6px;">${help}</div>` : ""}
+          `;
+
+          // answers
+          const list = document.createElement("div");
+          list.style.marginTop = "10px";
+
+          for (const a of (q.answers || [])) {
+            const row = document.createElement("div");
+            row.className = "compare-item";
+            const aLabel = pick(a, "label") || "";
+            const aDesc  = pick(a, "description") || "";
+            row.innerHTML = `
+              <div>
+                <div><b>${a.level}</b> — ${aLabel}</div>
+                ${aDesc ? `<div class="tiny muted" style="margin-top:4px;line-height:1.25;">${aDesc}</div>` : ""}
+              </div>
+            `;
+            list.appendChild(row);
+          }
+
+          box.appendChild(list);
+          out.appendChild(box);
+        }
+      }
+    </script>
+
+  </main>
+
+  <footer class="wrap tiny muted">
+    <div>Tech-Selector Demo</div>
+  </footer>
+
+  <script type="module">
+    import { nav } from "./app/render.js";
+    import { attachLangSelector } from "./app/i18n.js";
+
+    document.getElementById("topNav").appendChild(nav("questions.html"));
+    attachLangSelector("langSelect");
+  </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+{
+  "questions": [
+    {
+      "criterion_id": "rci_tamper_evidence_auditability",
+      "question_it": "Nel funzionamento ordinario del sistema, quale livello di garanzia è richiesto per poter rilevare e dimostrare eventuali modifiche non autorizzate ai dati?",
+      "id": "rci_tamper_evidence_auditability_req",
+      "question_en": "In ordinary system operation, what level of assurance is required to detect and prove unauthorized data changes?",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Garanzia non critica",
+          "label_en": "Not critical",
+          "description_it": "È accettabile che il sistema non fornisca prove strutturali forti di integrità. La fiducia nell’operatore è elevata e le eventuali modifiche possono essere gestite operativamente.",
+          "description_en": "It is acceptable that the system does not provide strong structural integrity proofs. Trust in the operator is high and changes can be handled operationally."
+        },
+        {
+          "level": "MID",
+          "label_it": "Garanzia importante",
+          "label_en": "Important",
+          "description_it": "È necessario poter rilevare e verificare eventuali modifiche ai dati. Il sistema deve supportare audit e verifiche di integrità, anche se basati su fiducia parziale.",
+          "description_en": "You need to detect and verify potential data changes. The system should support audits and integrity checks, even if based on partial trust."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Garanzia essenziale",
+          "label_en": "Essential",
+          "description_it": "È necessario poter dimostrare in modo strutturalmente verificabile che i dati non siano stati modificati. Il sistema deve supportare audit indipendenti, requisiti normativi o contesti multi-organizzazione.",
+          "description_en": "You must be able to prove in a structurally verifiable way that data has not been altered. The system must support independent audits, regulatory requirements, or multi-organization contexts."
+        }
+      ]
+    },
+    {
+      "criterion_id": "rci_finality_rollback_resistance",
+      "question_it": "Una volta confermata un’operazione, quale livello di irreversibilità è richiesto?",
+      "id": "rci_finality_rollback_resistance_req",
+      "question_en": "Once an operation is confirmed, what level of irreversibility is required?",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Irreversibilità non critica",
+          "label_en": "Not critical",
+          "description_it": "È accettabile che operazioni confermate possano essere revertite in casi eccezionali.",
+          "description_en": "It is acceptable that confirmed operations can be reverted in exceptional cases."
+        },
+        {
+          "level": "MID",
+          "label_it": "Irreversibilità importante",
+          "label_en": "Important",
+          "description_it": "Le operazioni confermate dovrebbero essere generalmente definitive. Rollback sono accettabili solo in condizioni rare o controllate.",
+          "description_en": "Confirmed operations should generally be final. Rollbacks are acceptable only in rare or controlled conditions."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Irreversibilità essenziale",
+          "label_en": "Essential",
+          "description_it": "Le operazioni confermate devono essere strutturalmente definitive e non revertibili. Rollback non sono accettabili.",
+          "description_en": "Confirmed operations must be structurally final and non-revertible. Rollbacks are not acceptable."
+        }
+      ]
+    },
+    {
+      "criterion_id": "rci_write_availability_fault_tolerance",
+      "question_it": "In presenza di guasti o indisponibilità parziali, quale livello di continuità delle operazioni di scrittura è richiesto?",
+      "id": "rci_write_availability_fault_tolerance_req",
+      "question_en": "In case of failures or partial unavailability, what level of write continuity is required?",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Continuità non critica",
+          "label_en": "Not critical",
+          "description_it": "Interruzioni temporanee delle scritture sono accettabili. Le operazioni possono essere posticipate.",
+          "description_en": "Temporary write interruptions are acceptable. Operations can be postponed."
+        },
+        {
+          "level": "MID",
+          "label_it": "Continuità importante",
+          "label_en": "Important",
+          "description_it": "Le scritture dovrebbero poter continuare nella maggior parte dei casi. Brevi interruzioni sono accettabili.",
+          "description_en": "Writes should continue in most cases. Short interruptions are acceptable."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Continuità essenziale",
+          "label_en": "Essential",
+          "description_it": "Le scritture devono poter continuare anche in presenza di guasti. Interruzioni devono essere minimizzate o evitate.",
+          "description_en": "Writes must continue even in the presence of failures. Interruptions must be minimized or avoided."
+        }
+      ]
+    }
+  ],
+  "schema_version": "1.1",
+  "macro_area": {
+    "id": "reliability",
+    "label_en": "Reliability, Continuity & Integrity",
+    "label_it": "Affidabilità, Continuità e Integrità"
+  }
+}

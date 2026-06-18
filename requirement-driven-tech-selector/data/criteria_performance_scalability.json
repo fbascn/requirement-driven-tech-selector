@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.1",
+  "macro_area": {
+    "id": "performance_scalability",
+    "label_en": "Performance & Scalability",
+    "label_it": "Performance e Scalabilità",
+    "description_en": "Quantitative criteria for processing capacity and growth capability.",
+    "description_it": "Criteri quantitativi per capacità di elaborazione e capacità di crescita."
+  },
+  "levels_encoding": {
+    "LOW": 0,
+    "MID": 1,
+    "HIGH": 2
+  },
+  "criteria": [
+    {
+      "id": "ps_throughput",
+      "label_en": "Throughput",
+      "label_it": "Throughput",
+      "type": "UP",
+      "description_en": "Sustained computational capacity (TPS/ops/sec) assessed on a comparable baseline, used as a structural class rather than a deployment-specific point value.",
+      "description_it": "Capacità computazionale sostenibile (TPS/ops/sec) valutata su baseline comparabile, usata come classe strutturale e non come valore puntuale dipendente dal deployment.",
+      "metric": {
+        "name_en": "Sustained Throughput",
+        "name_it": "Throughput sostenuto",
+        "symbol": "TPS",
+        "unit_en": "transactions per second (TPS)",
+        "unit_it": "transazioni al secondo (TPS)",
+        "measurement_note_en": "Throughput is used to classify technologies by order of magnitude of computational capacity, not to compare deployment-specific point values.",
+        "measurement_note_it": "Il throughput è usato per classificare le tecnologie per ordine di grandezza della capacità computazionale e non per confrontare valori puntuali dipendenti da specifiche configurazioni."
+      },
+      "formula": {
+        "latex": "TPS",
+        "description_en": "TPS (or equivalent ops/sec) measured or derived on a comparable baseline.",
+        "description_it": "TPS (o ops/sec equivalenti) misurati o derivati su baseline comparabile."
+      },
+      "motivation_en": "Throughput captures the technology’s structural ability to sustain operational load and is a standard performance-engineering metric, comparable across heterogeneous technologies when assessed under comparable reference conditions.",
+      "motivation_it": "Il throughput rappresenta la capacità strutturale della tecnologia di sostenere un certo livello di carico operativo ed è una metrica standard del performance engineering, definibile in modo non ambiguo e confrontabile tra tecnologie eterogenee, purché valutata su condizioni di riferimento comparabili.",
+      "parameterization": {
+        "LOW": {
+          "range_text_en": "< 100 TPS",
+          "range_text_it": "< 100",
+          "min_inclusive": 0,
+          "max_exclusive": 100
+        },
+        "MID": {
+          "range_text_en": "100 – 1,000 TPS",
+          "range_text_it": "100 – 1000",
+          "min_inclusive": 100,
+          "max_inclusive": 1000
+        },
+        "HIGH": {
+          "range_text_en": "> 1,000 TPS",
+          "range_text_it": "> 1000",
+          "min_exclusive": 1000,
+          "max": "INF"
+        }
+      },
+      "measurement_type": "direct_objective_metric",
+      "direction": "UP"
+    },
+    {
+      "id": "ps_scalability",
+      "label_en": "Scalability",
+      "label_it": "Scalabilità",
+      "type": "UP",
+      "description_en": "Structural ability to grow capacity as load increases, assessed via the presence of architecture-level scalability enablers (proxy structural indicator).",
+      "description_it": "Capacità strutturale di crescere al crescere del carico, valutata tramite la presenza di meccanismi architetturali abilitanti la scalabilità (proxy strutturale).",
+      "metric": {
+        "name_en": "Structural Scalability Factor",
+        "name_it": "Fattore di scalabilità strutturale",
+        "symbol": "ScF",
+        "unit_en": "normalized score (0–1)",
+        "unit_it": "punteggio normalizzato (0–1)",
+        "measurement_note_en": "The Scalability Factor is an intrinsic architectural property and does not depend on operational configurations or the contingent number of nodes.",
+        "measurement_note_it": "Lo Scalability Factor rappresenta una proprietà architetturale intrinseca della tecnologia e non dipende da configurazioni operative specifiche o dal numero contingente di nodi."
+      },
+      "formula": {
+        "latex": "ScF = \\frac{f_1 + f_2 + f_3 + f_4}{4}, \\quad f_k \\in \\{0,1\\}",
+        "description_en": "Average of four binary architecture features (1 present, 0 absent).",
+        "description_it": "Media di quattro feature architetturali binarie (1 presente, 0 assente)."
+      },
+      "motivation_en": "Scalability is an architectural property describing structural growth potential rather than observed performance. A structural indicator enables comparable, deployment-independent evaluation, consistent with the distinction between runtime capacity and architectural properties.",
+      "motivation_it": "La scalabilità rappresenta una proprietà architetturale relativa al potenziale strutturale di crescita della tecnologia e non una prestazione osservata. L’utilizzo di un indicatore strutturale consente una valutazione comparabile e indipendente dal deployment, coerentemente con la distinzione tra capacità di runtime e proprietà architetturali.",
+      "parameterization": {
+        "LOW": {
+          "range_text_en": "SF ≤ 0.25",
+          "range_text_it": "ScF ≤ 0.25",
+          "max_inclusive": 0.25
+        },
+        "MID": {
+          "range_text_en": "0.25 < SF ≤ 0.75",
+          "range_text_it": "0.25 < ScF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
+        },
+        "HIGH": {
+          "range_text_en": "SF > 0.75",
+          "range_text_it": "ScF > 0.75",
+          "min_exclusive": 0.75,
+          "max": "INF"
+        }
+      },
+      "features": [
+        {
+          "id": "f1_parallel_execution",
+          "label_en": "Parallel execution",
+          "label_it": "Esecuzione parallela",
+          "definition_en": "The technology enables concurrent processing of independent operations/transactions (not strictly sequential execution by design).",
+          "definition_it": "La tecnologia abilita l’elaborazione concorrente di operazioni/transazioni indipendenti (non esecuzione strettamente sequenziale per design)."
+        },
+        {
+          "id": "f2_horizontal_partitioning",
+          "label_en": "Horizontal partitioning (sharding)",
+          "label_it": "Partizionamento orizzontale (sharding)",
+          "definition_en": "Native support for partitioning data/workload into independent partitions (shards) to distribute load.",
+          "definition_it": "Supporto nativo al partizionamento di dati/workload in partizioni indipendenti (shard) per distribuire il carico."
+        },
+        {
+          "id": "f3_no_global_serialization",
+          "label_en": "Absence of global serialization",
+          "label_it": "Assenza di serializzazione globale",
+          "definition_en": "There is no mandatory global ordering/serialization point that all operations must pass through.",
+          "definition_it": "Non esiste un punto obbligatorio di ordinamento/serializzazione globale attraverso cui devono passare tutte le operazioni."
+        },
+        {
+          "id": "f4_scalable_coordination_model",
+          "label_en": "Scalable coordination model",
+          "label_it": "Modello di coordinamento scalabile",
+          "definition_en": "Coordination/commit/consensus mechanisms can scale without requiring full replication plus global coordination that structurally limits growth.",
+          "definition_it": "I meccanismi di coordinamento/commit/consenso possono scalare senza richiedere replica completa e coordinamento globale che limitano strutturalmente la crescita."
+        }
+      ],
+      "evaluation_procedure": {
+        "steps_en": [
+          "Define the reference baseline variant for the technology (technology-level configuration to be evaluated).",
+          "For each feature f1–f4, assess presence (1) or absence (0) using authoritative technical documentation and/or peer-reviewed architecture papers.",
+          "Compute SF as the average of the four feature values.",
+          "Map SF to LOW/MID/HIGH using the predefined thresholds."
+        ],
+        "steps_it": [
+          "Definire la variante baseline di riferimento per la tecnologia (configurazione technology-level valutata).",
+          "Per ciascuna feature f1–f4, valutare presenza (1) o assenza (0) usando documentazione tecnica autorevole e/o paper architetturali peer-reviewed.",
+          "Calcolare SF come media dei quattro valori.",
+          "Mappare SF su LOW/MID/HIGH usando le soglie predefinite."
+        ]
+      },
+      "measurement_type": "proxy_structural_indicator",
+      "direction": "UP"
+    }
+  ]
+}

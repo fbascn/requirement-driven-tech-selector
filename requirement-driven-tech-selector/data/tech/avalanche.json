@@ -1,0 +1,231 @@
+{
+  "id": "avalanche",
+  "label": "Avalanche",
+  "values": {
+    "ps_throughput": "MID",
+    "ps_scalability": "LOW",
+    "eco_baseline_footprint": "MID",
+    "eco_variable_transaction_cost": "MID",
+    "eco_storage_footprint": "LOW",
+    "rci_tamper_evidence_auditability": "HIGH",
+    "rci_finality_rollback_resistance": "MID",
+    "rci_write_availability_fault_tolerance": "HIGH",
+    "ags_control_distribution_governance": "HIGH",
+    "ags_identity_access_governance": "LOW",
+    "ags_collusion_resilience": "MID"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 76.0,
+      "unit": "EUR/month",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 4,
+        "ram_gb": null,
+        "storage_gb": 200
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model. This value refers strictly to the framework MCC, not to Avalanche's real recommended validator hardware.",
+      "source": "Framework cost model applied to Avalanche Minimum Correctness Configuration (1 validator node, full chain state replica)",
+      "source_url": "https://docs.avax.network/"
+    },
+    "ps_throughput": {
+      "value": 100,
+      "unit": "TPS",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "estimation_note": "Conservative technology-level estimate for Avalanche C-Chain derived from documented gas-target capacity rather than from marketing TPS claims. The value operationalizes approximately 2.1M gas/sec into the order of magnitude of simple EVM transfers.",
+      "source": "Avalanche Builder Hub, Avalanche C-Chain Throughput Increases as Validators Signal Higher Gas Targets",
+      "source_url": "https://build.avax.network/blog/gas-target-increase"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0.0257,
+      "unit": "EUR/transaction",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "conversion_note": "Estimated from a simple 21,000-gas C-Chain transfer using a midpoint gas price of 150 nAVAX within Avalanche's documented dynamic fee range.",
+      "source": "Avalanche Support, What are the transaction fees on Avalanche?",
+      "source_url": "https://support.avax.network/en/articles/5521050-what-are-the-transaction-fees-on-avalanche"
+    },
+    "eco_storage_footprint": {
+      "value": 200,
+      "unit": "GB",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "Framework baseline storage assumption for Avalanche MCC",
+      "source_url": "https://docs.avax.network/"
+    },
+    "ps_scalability": {
+      "value": 0.25,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 0,
+          "motivation": "The C-Chain baseline is a linear EVM chain and does not provide native ledger-level parallel execution."
+        },
+        "horizontal_partitioning": {
+          "value": 0,
+          "motivation": "The evaluated C-Chain baseline does not natively partition its own global state horizontally."
+        },
+        "absence_of_global_serialization": {
+          "value": 0,
+          "motivation": "Snowman is a linear-chain protocol and therefore relies on globally serialized block ordering for the C-Chain."
+        },
+        "scalable_coordination_model": {
+          "value": 1,
+          "motivation": "Snowman uses repeated sub-sampled voting and a coordination model more scalable than classical all-to-all consensus."
+        }
+      },
+      "source": "Avalanche C-Chain and Snowman architecture",
+      "source_url": "https://build.avax.network/docs/primary-network/coreth-architecture"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "The C-Chain maintains an append-only block history."
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Blocks and state transitions are cryptographically linked in the linear chain architecture."
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions are authenticated by cryptographic signatures in the EVM account model."
+        },
+        "independent_integrity_verification": {
+          "value": 1,
+          "motivation": "Full nodes and validators can independently verify chain history and state validity."
+        }
+      },
+      "source": "Avalanche C-Chain transaction and node model",
+      "source_url": "https://build.avax.network/docs/primary-network/coreth-architecture"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "probabilistic_snowman",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 0,
+          "motivation": "Avalanche finality is very fast but probabilistic rather than deterministic in the strict classical-BFT sense."
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 1,
+          "motivation": "Consensus depends on repeated polling and confirmation across multiple validators."
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "No protocol-level unilateral rollback mechanism exists after acceptance/finality progression."
+        }
+      },
+      "source": "Avalanche Snowman consensus model",
+      "source_url": "https://build.avax.network/docs/primary-network/avalanche-consensus"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 1,
+          "motivation": "Avalanche does not structurally depend on a single privileged writer."
+        },
+        "quorum_based_write_continuation": {
+          "value": 1,
+          "motivation": "Write continuation depends on distributed validator participation in the native consensus model."
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 1,
+          "motivation": "The protocol continues operation without relying on centralized manual failover."
+        },
+        "multi_node_write_survivability": {
+          "value": 1,
+          "motivation": "System continuity depends on a plurality of validators rather than on the single validator of the MCC."
+        }
+      },
+      "source": "Avalanche native validator consensus model",
+      "source_url": "https://build.avax.network/docs/primary-network/avalanche-consensus"
+    },
+    "ags_control_distribution_governance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 1,
+          "motivation": "The Avalanche model does not assign structural unilateral authority to a single entity."
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 1,
+          "motivation": "Validation and acceptance depend on multiple validators in the native protocol model."
+        },
+        "validator_admission_independence": {
+          "value": 1,
+          "motivation": "Validator admission is permissionless through staking rather than enterprise membership approval."
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 1,
+          "motivation": "The validator set is not structurally closed or static."
+        }
+      },
+      "source": "Avalanche validator model",
+      "source_url": "https://build.avax.network/docs/nodes"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 0,
+          "motivation": "Avalanche does not implement a native enterprise IAM framework with structured roles and privileges."
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 0,
+          "motivation": "There is no native protocol-level lifecycle governance comparable to permissioned enterprise platforms."
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "The protocol does not provide a native identity governance framework in the sense required by this criterion."
+        }
+      },
+      "source": "Avalanche C-Chain account model",
+      "source_url": "https://build.avax.network/docs/primary-network/coreth-architecture"
+    },
+    "ags_collusion_resilience": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 1,
+          "motivation": "A single validator cannot unilaterally compromise the system in the native operational model."
+        },
+        "majority_compromise_required": {
+          "value": 1,
+          "motivation": "Reliable compromise requires control of a relevant and distributed portion of validation power."
+        },
+        "supermajority_compromise_required": {
+          "value": 0,
+          "motivation": "The model does not rely on a classical BFT-style supermajority threshold."
+        }
+      },
+      "source": "Avalanche consensus model",
+      "source_url": "https://build.avax.network/docs/primary-network/avalanche-consensus"
+    }
+  }
+}

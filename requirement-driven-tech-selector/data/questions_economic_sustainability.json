@@ -1,0 +1,103 @@
+{
+  "questions": [
+    {
+      "id": "eco_baseline_footprint_req",
+      "criterion_id": "eco_baseline_footprint",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Vincolo economico molto restrittivo",
+          "label_en": "Very tight budget",
+          "description_it": "Il sistema deve poter operare con un costo minimo molto contenuto. È disponibile un budget limitato per mantenere il sistema attivo.",
+          "description_en": "The system must operate with a very low minimum cost. Only a limited budget is available to keep the system running."
+        },
+        {
+          "level": "MID",
+          "label_it": "Vincolo economico moderato",
+          "label_en": "Moderate budget constraint",
+          "description_it": "Il sistema può sostenere un costo minimo moderato. È disponibile un budget adeguato per mantenere il sistema operativo.",
+          "description_en": "The system can sustain a moderate minimum cost. An adequate budget is available to keep the system operational."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Vincolo economico non restrittivo",
+          "label_en": "Not a binding constraint",
+          "description_it": "Il costo minimo necessario per mantenere il sistema operativo non rappresenta un vincolo significativo. Il sistema può sostenere anche configurazioni con impegno economico elevato.",
+          "description_en": "The minimum cost required to keep the system running is not a significant constraint. The system can sustain even high-cost baseline setups."
+        }
+      ],
+      "question_it": "Nel funzionamento ordinario del sistema, quale livello di impegno economico minimo è sostenibile per mantenere il sistema operativo?",
+      "question_en": "In ordinary system operation, what level of minimum economic effort is sustainable to keep the system operational?",
+      "help_it": "",
+      "help_en": ""
+    },
+    {
+      "id": "eco_variable_transaction_cost_req",
+      "criterion_id": "eco_variable_transaction_cost",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Vincolo molto restrittivo",
+          "label_en": "Very tight per-operation cost",
+          "description_it": "Ogni operazione deve avere un costo monetario minimo o nullo. Il sistema deve poter sostenere volumi operativi elevati senza costi per operazione significativi.",
+          "description_en": "Each operation must have a minimal or zero monetary cost. The system must support high volumes without significant per-operation fees."
+        },
+        {
+          "level": "MID",
+          "label_it": "Vincolo moderato",
+          "label_en": "Moderate per-operation cost",
+          "description_it": "Ogni operazione può avere un costo monetario moderato. Costi per operazione sono accettabili entro limiti controllati.",
+          "description_en": "Each operation may have a moderate monetary cost. Per-operation fees are acceptable within controlled limits."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Vincolo non restrittivo",
+          "label_en": "Per-operation cost not a constraint",
+          "description_it": "Il costo per operazione non rappresenta un vincolo significativo. Il sistema può sostenere anche costi elevati per singola operazione.",
+          "description_en": "Per-operation cost is not a significant constraint. The system can tolerate even high fees per operation."
+        }
+      ],
+      "question_it": "Nel funzionamento ordinario del sistema, quale livello di costo per singola operazione è sostenibile?",
+      "question_en": "In ordinary system operation, what level of cost per single operation is sustainable?",
+      "help_it": "",
+      "help_en": ""
+    },
+    {
+      "id": "eco_storage_footprint_req",
+      "criterion_id": "eco_storage_footprint",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Vincolo molto restrittivo",
+          "label_en": "Very tight storage growth",
+          "description_it": "Lo storage deve rimanere limitato nel tempo. La crescita dello storage deve essere contenuta.",
+          "description_en": "Storage must remain limited over time. Storage growth must be kept under control."
+        },
+        {
+          "level": "MID",
+          "label_it": "Vincolo moderato",
+          "label_en": "Moderate storage growth",
+          "description_it": "Lo storage può crescere progressivamente. Una crescita moderata è sostenibile.",
+          "description_en": "Storage may grow progressively. Moderate growth is sustainable."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Vincolo non restrittivo",
+          "label_en": "Storage growth not a constraint",
+          "description_it": "La crescita dello storage non rappresenta un vincolo significativo. Il sistema può sostenere anche footprint elevati.",
+          "description_en": "Storage growth is not a significant constraint. The system can sustain even large storage footprints."
+        }
+      ],
+      "question_it": "Nel medio-lungo periodo, quale livello di crescita dello storage è sostenibile per il sistema?",
+      "question_en": "In the medium to long term, what level of storage growth is sustainable for the system?",
+      "help_it": "",
+      "help_en": ""
+    }
+  ],
+  "schema_version": "1.1",
+  "macro_area": {
+    "id": "economic_sustainability",
+    "label_en": "Economic Sustainability",
+    "label_it": "Sostenibilità economica"
+  }
+}

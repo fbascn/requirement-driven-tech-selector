@@ -1,0 +1,96 @@
+{
+  "macro_area": {
+    "id": "performance_scalability",
+    "label_it": "Performance e Scalabilità",
+    "label_en": "Performance and Scalability"
+  },
+  "schema": {
+    "name": "tech-selector.questions",
+    "version": "1.0.0"
+  },
+  "scale": {
+    "levels": [
+      "LOW",
+      "MID",
+      "HIGH"
+    ],
+    "map": {
+      "LOW": 0,
+      "MID": 1,
+      "HIGH": 2
+    }
+  },
+  "weight": {
+    "type": "integer",
+    "min": 1,
+    "max": 5,
+    "default": 3,
+    "prompt_en": "How important is this aspect for your application? (1 = low importance, 5 = critical)",
+    "prompt_it": "Quanto è importante questo aspetto per la tua applicazione? (1 = poco importante, 5 = critico)"
+  },
+  "questions": [
+    {
+      "criterion_id": "ps_throughput",
+      "question_en": "In normal operation, what volume of operations do you expect to handle?",
+      "question_it": "Nel funzionamento ordinario del sistema, quale volume di operazioni prevedi di dover gestire?",
+      "help_en": "Choose the option that best matches typical activity. The model will translate this into a throughput class (LOW/MID/HIGH) without requiring TPS estimates.",
+      "help_it": "Scegli l’opzione che descrive meglio l’attività tipica. Il modello la tradurrà in una classe di throughput (LOW/MID/HIGH) senza richiedere stime in TPS.",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Bassa intensità operativa",
+          "label_en": "Low operational intensity",
+          "description_it": "Numero limitato di operazioni, distribuite nel tempo. Uso sporadico o numero ridotto di operazioni concorrenti.",
+          "description_en": "Limited number of operations spread over time; sporadic use or few concurrent operations."
+        },
+        {
+          "level": "MID",
+          "label_it": "Intensità operativa moderata",
+          "label_en": "Moderate operational intensity",
+          "description_it": "Flusso regolare di operazioni durante il normale utilizzo. Presenza di più operazioni concorrenti su base continuativa.",
+          "description_en": "Regular flow of operations during normal use; multiple concurrent operations on an ongoing basis."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Alta intensità operativa",
+          "label_en": "High operational intensity",
+          "description_it": "Volume elevato di operazioni o richieste simultanee. Sistema soggetto a carichi frequenti, intensivi o continuativi.",
+          "description_en": "High volume of operations or simultaneous requests; frequent, intensive, or continuous load."
+        }
+      ],
+      "id": "ps_throughput_req"
+    },
+    {
+      "criterion_id": "ps_scalability",
+      "question_en": "In the medium term (2–5 years), what level of operational growth do you expect for the system?",
+      "question_it": "Nel medio periodo (2–5 anni), quale livello di crescita operativa prevedi per il sistema?",
+      "help_en": "Think about growth in users, partners/organizations, data volume, or process frequency over the next 2–5 years.",
+      "help_it": "Pensa alla crescita di utenti, partner/organizzazioni, volume di dati o frequenza delle operazioni nel prossimo periodo (2–5 anni).",
+      "answers": [
+        {
+          "level": "LOW",
+          "label_it": "Stabilità strutturale",
+          "label_en": "Structural stability",
+          "description_it": "Il volume di operazioni previsto rimarrà sostanzialmente stabile.",
+          "description_en": "The expected volume of operations will remain roughly stable."
+        },
+        {
+          "level": "MID",
+          "label_it": "Crescita moderata",
+          "label_en": "Moderate growth",
+          "description_it": "È previsto un aumento progressivo del volume operativo.",
+          "description_en": "A gradual increase in operational volume is expected."
+        },
+        {
+          "level": "HIGH",
+          "label_it": "Crescita significativa",
+          "label_en": "Significant growth",
+          "description_it": "È previsto un aumento sostanziale del volume operativo nel tempo.",
+          "description_en": "A substantial increase in operational volume is expected over time."
+        }
+      ],
+      "id": "ps_scalability_req"
+    }
+  ],
+  "schema_version": "1.1"
+}

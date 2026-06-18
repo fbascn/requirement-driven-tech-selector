@@ -1,0 +1,41 @@
+{
+  "technologies": [
+    {
+      "id": "ethereum",
+      "label": "Ethereum"
+    },
+    {
+      "id": "bitcoin",
+      "label": "Bitcoin"
+    },
+    {
+      "id": "corda",
+      "label": "Corda"
+    },	
+    {
+      "id": "hyperledger_fabric",
+      "label": "Hyperledger Fabric"
+    },
+    {
+      "id": "iota",
+      "label": "IOTA Rebased"
+    },
+    {
+      "id": "quorum",
+      "label": "ConsenSys Quorum"
+    },
+    {
+      "id": "avalanche",
+      "label": "Avalanche"
+    },	
+    {
+      "id": "mysql",
+      "label": "MySql"
+    },
+    {
+      "id": "mongodb",
+      "label": "MongoDB"
+    }
+
+  ]
+}

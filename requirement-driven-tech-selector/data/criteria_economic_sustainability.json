@@ -1,0 +1,153 @@
+{
+  "criteria": [
+    {
+      "id": "eco_baseline_footprint",
+      "label_en": "Baseline Infrastructure Footprint",
+      "label_it": "Baseline Infrastructure Footprint",
+      "type": "DOWN",
+      "description_en": "Baseline Infrastructure Footprint captures the minimum structural infrastructure cost required for the technology to operate correctly, independently of utilization volume. The value is derived from the Minimum Correctness Configuration (MCC) and normalized through a uniform cost model for technology-level comparability; it is used to classify technologies into structural commitment classes, not to estimate real deployment costs.",
+      "description_it": "Il Baseline Infrastructure Footprint rappresenta il costo infrastrutturale strutturale minimo necessario affinché la tecnologia possa operare correttamente, indipendentemente dal volume di utilizzo. Il valore è derivato dalla Minimum Correctness Configuration (MCC) e normalizzato tramite un modello di costo uniforme al solo scopo di consentire la comparazione technology-level; è usato per classificare le tecnologie in classi strutturali di impegno infrastrutturale e non per stimare costi reali di deployment.",
+      "metric": "Normalized monthly cost (EUR/month) derived from the MCC resource footprint via a uniform cost model.",
+      "formula": {
+        "latex": "BIF = Σ (CPUᵢ × C_CPU + RAMᵢ × C_RAM + STORᵢ × C_STOR)"
+      },
+      "motivation_en": "Baseline infrastructure commitment is a fundamental structural property because it reflects the minimum compute resources required for correct operation regardless of workload. Distinguishing fixed structural costs from variable usage costs is standard in performance engineering and cloud cost modeling and supports long-term economic sustainability assessment.",
+      "motivation_it": "Il Baseline Infrastructure Footprint riflette il livello minimo di risorse computazionali necessario per il funzionamento corretto del sistema, indipendentemente dal carico operativo. La distinzione tra costi strutturali e costi variabili è un principio consolidato del performance engineering e del cloud cost modeling, utile per valutare la sostenibilità economica nel tempo.",
+      "parameterization": {
+        "levels": [
+          "LOW",
+          "MID",
+          "HIGH"
+        ],
+        "thresholds": {
+          "LOW": {
+            "max_inclusive": 50
+          },
+          "MID": {
+            "min_exclusive": 50,
+            "max_inclusive": 200
+          },
+          "HIGH": {
+            "min_exclusive": 200
+          }
+        },
+        "units": "EUR/month",
+        "notes": "Thresholds are model decision boundaries based on orders of magnitude for structural infrastructure commitment, not universal economic standards.",
+        "LOW": {
+          "range": "≤ 50 EUR/month"
+        },
+        "MID": {
+          "range": "50 – 200 EUR/month"
+        },
+        "HIGH": {
+          "range": "> 200 EUR/month"
+        }
+      },
+      "measurement_type": "proxy_structural_indicator",
+      "direction": "DOWN"
+    },
+    {
+      "id": "eco_variable_transaction_cost",
+      "label_en": "Variable Transaction Cost",
+      "label_it": "Variable Transaction Cost",
+      "type": "DOWN",
+      "description_en": "Variable Transaction Cost captures the marginal monetary cost per operation imposed directly by the protocol/architecture (e.g., protocol-level fees). When fees are denominated in cryptocurrency, they are converted to EUR using a representative average exchange rate over a defined interval to ensure comparability. Technologies without protocol fees are assigned zero. The value is used for order-of-magnitude classification, not for deployment-specific cost estimation.",
+      "description_it": "Il Variable Transaction Cost rappresenta il costo monetario marginale per operazione imposto direttamente dal protocollo/architettura (es. fee di protocollo). Quando le fee sono espresse in criptovaluta, il valore è convertito in EUR con un tasso di cambio medio rappresentativo su un intervallo temporale definito per garantire comparabilità. Per tecnologie prive di fee di protocollo, il valore è pari a zero. Il valore è usato per classificazioni per ordine di grandezza, non per stime di costo operative specifiche.",
+      "metric": "Average protocol-imposed fee per transaction in EUR/transaction.",
+      "formula": {
+        "latex": "VTC = Fee_tx"
+      },
+      "motivation_en": "Protocol-level marginal fees are an intrinsic economic property of permissionless systems, whereas they are typically absent at protocol level in databases and many permissioned systems. This criterion isolates the structural marginal cost that scales with usage volume.",
+      "motivation_it": "Il Variable Transaction Cost isola il costo economico marginale imposto dal protocollo per l’elaborazione delle operazioni. Nei sistemi permissionless questo costo è una proprietà strutturale del protocollo, mentre nei database e in molti sistemi permissioned è tipicamente assente a livello di protocollo.",
+      "parameterization": {
+        "levels": [
+          "LOW",
+          "MID",
+          "HIGH"
+        ],
+        "thresholds": {
+          "LOW": {
+            "max_inclusive": 0.001
+          },
+          "MID": {
+            "min_exclusive": 0.001,
+            "max_inclusive": 0.05
+          },
+          "HIGH": {
+            "min_exclusive": 0.05
+          }
+        },
+        "units": "EUR/transaction",
+        "notes": "Thresholds are model decision boundaries for order-of-magnitude marginal cost classes.",
+        "LOW": {
+          "range": "≤ 0.001 EUR/transaction"
+        },
+        "MID": {
+          "range": "0.001 – 0.05 EUR/transaction"
+        },
+        "HIGH": {
+          "range": "> 0.05 EUR/transaction"
+        }
+      },
+      "measurement_type": "direct_objective_metric",
+      "direction": "DOWN"
+    },
+    {
+      "id": "eco_storage_footprint",
+      "label_en": "Storage Footprint",
+      "label_it": "Storage Footprint",
+      "type": "DOWN",
+      "description_en": "Storage Footprint captures the volume of persistent storage structurally required by the technology to operate correctly over time, independently of the specific application dataset. It is computed as the sum of regime persistent storage across all components in the structural reference configuration, including state, ledger/history, metadata, and architecture-imposed replication overhead. The value is used for order-of-magnitude classification, not for use-case-specific sizing.",
+      "description_it": "Lo Storage Footprint rappresenta il volume di storage persistente strutturalmente richiesto dalla tecnologia per operare correttamente nel tempo, indipendentemente dal dataset applicativo specifico. È calcolato come somma dello storage mantenuto a regime da tutti i componenti della configurazione strutturale di riferimento, includendo stato, ledger/storia, metadati e overhead di replica imposto dall’architettura. Il valore è usato per classificare per ordine di grandezza, non per dimensionamenti dipendenti dal caso d’uso.",
+      "metric": "Total persistent storage structurally maintained at regime, expressed in GB.",
+      "formula": {
+        "latex": "StF = Σ STORᵢ,regime (GB)"
+      },
+      "motivation_en": "Persistent storage is a primary structural resource in distributed systems, especially in replicated, ledger-based, or append-only architectures where maintaining state and operational history is integral to correctness. As a consequence, storage footprint is a key driver of long-term economic and operational sustainability and can be treated as an intrinsic architectural property when assessed on coherent reference configurations.",
+      "motivation_it": "Lo storage persistente è una risorsa strutturale primaria nei sistemi distribuiti, in particolare in architetture basate su replica, ledger distribuiti o strutture append-only, dove la conservazione dello stato e della storia operativa è parte integrante del funzionamento. Di conseguenza, lo storage footprint è un driver della sostenibilità economica e operativa nel lungo periodo ed è trattabile come proprietà architetturale intrinseca quando valutata su configurazioni di riferimento coerenti.",
+      "parameterization": {
+        "levels": [
+          "LOW",
+          "MID",
+          "HIGH"
+        ],
+        "thresholds": {
+          "LOW": {
+            "max_inclusive": 200
+          },
+          "MID": {
+            "min_exclusive": 200,
+            "max_inclusive": 800
+          },
+          "HIGH": {
+            "min_exclusive": 800
+          }
+        },
+        "units": "GB",
+        "notes": "Thresholds are model decision boundaries for structural storage commitment classes.",
+        "LOW": {
+          "range": "≤ 200 GB"
+        },
+        "MID": {
+          "range": "200 – 800 GB"
+        },
+        "HIGH": {
+          "range": "> 800 GB"
+        }
+      },
+      "measurement_type": "proxy_structural_indicator",
+      "direction": "DOWN"
+    }
+  ],
+  "schema_version": "1.1",
+  "macro_area": {
+    "id": "economic_sustainability",
+    "label_en": "Economic Sustainability",
+    "label_it": "Sostenibilità economica"
+  },
+  "levels_encoding": {
+    "LOW": 0,
+    "MID": 1,
+    "HIGH": 2
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "macro_area": {
+    "id": "arch_gov_security",
+    "label_en": "Architecture, Governance & Security",
+    "label_it": "Architettura, Governance e Sicurezza"
+  },
+  "criteria": [
+    {
+      "id": "ags_control_distribution_governance",
+      "label_en": "Control Distribution and Governance Concentration",
+      "label_it": "Distribuzione del controllo e concentrazione della governance",
+      "description_en": "Structural degree of distribution of control/validation/decision authority within the system (proxy indicator).",
+      "description_it": "Grado strutturale di distribuzione dell’autorità di controllo/validazione/decisione nel sistema (indicatore proxy).",
+      "type": "FULL_MATCH",
+      "criterion_type": "FULL_MATCH",
+      "direction": "FULL_MATCH",
+      "measurement_type": "proxy_structural_indicator",
+      "metric": {
+        "abbr": "CDSF",
+        "name_en": "Control Distribution Score Factor",
+        "name_it": "Fattore di distribuzione del controllo (CDSF)",
+        "unit_en": "ratio (0..1)",
+        "unit_it": "rapporto (0..1)"
+      },
+      "formula": {
+        "latex": "CDSF = (f1 + f2 + f3 + f4) / 4"
+      },
+      "structural_properties": [
+        "Absence of single-entity unilateral state authority",
+        "Structural requirement for multi-entity validation",
+        "Validator admission independence",
+        "Absence of structurally fixed validator set"
+      ],
+      "classes": {
+        "LOW": "CDSF ≤ 0.25",
+        "MID": "0.25 < CDSF ≤ 0.75",
+        "HIGH": "CDSF > 0.75"
+      },
+      "parameterization": {
+        "LOW": { "range": "CDSF ≤ 0.25" },
+        "MID": { "range": "0.25 < CDSF ≤ 0.75" },
+        "HIGH": { "range": "CDSF > 0.75" }
+      }
+    },
+    {
+      "id": "ags_identity_access_governance",
+      "label_en": "Native Identity & Access Governance Capability",
+      "label_it": "Capacità nativa di governance delle identità e degli accessi",
+      "description_en": "Structural capability to define, govern and enforce identities, roles and privileges as part of the technology’s native model (proxy indicator).",
+      "description_it": "Capacità strutturale di definire, governare e applicare identità, ruoli e privilegi come parte del modello nativo della tecnologia (indicatore proxy).",
+      "type": "FULL_MATCH",
+      "criterion_type": "FULL_MATCH",
+      "direction": "FULL_MATCH",
+      "measurement_type": "proxy_structural_indicator",
+      "metric": {
+        "abbr": "IGSF",
+        "name_en": "Identity Governance Score Factor",
+        "name_it": "Fattore di governance identitaria (IGSF)",
+        "unit_en": "ratio (0..1)",
+        "unit_it": "rapporto (0..1)"
+      },
+      "formula": {
+        "latex": "IGSF = (f1 + f2 + f3) / 3"
+      },
+      "structural_properties": [
+        "Native privilege differentiation capability",
+        "Native identity lifecycle governance capability",
+        "Structural independence of identity governance from a single authority"
+      ],
+      "classes": {
+        "LOW": "IGSF ≤ 0.25",
+        "MID": "0.25 < IGSF ≤ 0.75",
+        "HIGH": "IGSF > 0.75"
+      },
+      "parameterization": {
+        "LOW": { "range": "IGSF ≤ 0.25" },
+        "MID": { "range": "0.25 < IGSF ≤ 0.75" },
+        "HIGH": { "range": "IGSF > 0.75" }
+      }
+    },
+    {
+      "id": "ags_collusion_resilience",
+      "label_en": "Collusion Resilience",
+      "label_it": "Resilienza alla collusione",
+      "description_en": "Structural resistance to sustained compromise/collusion (proxy indicator), expressed as the threshold of colluding actors required to maintain invalid state as valid.",
+      "description_it": "Resistenza strutturale a compromissione/collusione sostenuta (indicatore proxy), espressa come soglia di attori collusi necessaria a mantenere stato invalido come valido.",
+      "type": "UP",
+      "criterion_type": "UP",
+      "direction": "UP",
+      "measurement_type": "proxy_structural_indicator",
+      "metric": {
+        "abbr": "CRSF",
+        "name_en": "Collusion Resilience Score Factor",
+        "name_it": "Fattore di resilienza alla collusione (CRSF)",
+        "unit_en": "ratio (0..1)",
+        "unit_it": "rapporto (0..1)"
+      },
+      "formula": {
+        "latex": "CRSF = (f1 + f2 + f3) / 3"
+      },
+      "structural_properties": [
+        "Non-unilateral compromise possible",
+        "Majority compromise required",
+        "Supermajority compromise required"
+      ],
+      "classes": {
+        "LOW": "CRSF ≤ 0.25",
+        "MID": "0.25 < CRSF ≤ 0.75",
+        "HIGH": "CRSF > 0.75"
+      },
+      "parameterization": {
+        "LOW": { "range": "CRSF ≤ 0.25" },
+        "MID": { "range": "0.25 < CRSF ≤ 0.75" },
+        "HIGH": { "range": "CRSF > 0.75" }
+      }
+    }
+  ],
+  "schema_version": "1.1",
+  "levels_encoding": {
+    "LOW": 0,
+    "MID": 1,
+    "HIGH": 2
+  }
+}

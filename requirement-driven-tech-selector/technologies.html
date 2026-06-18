@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Technologies</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+
+<header>
+  <div class="wrap" id="topNav"></div>
+
+  <div class="wrap">
+    <h1 id="pageTitle"></h1>
+    <p class="muted" id="pageSubtitle"></p>
+  </div>
+</header>
+
+
+<main class="wrap">
+
+<div class="card" style="margin-bottom:12px;">
+
+  <div class="controls">
+
+    <div>
+
+      <div class="tiny muted" id="macroLbl"></div>
+
+      <select id="macroSelect"></select>
+
+    </div>
+
+
+    <div>
+
+      <div class="tiny muted" id="macroHint"></div>
+
+      <span class="badge" id="macroBadge">—</span>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<div class="card">
+
+  <h2 id="tH2"></h2>
+
+  <div id="out"></div>
+
+</div>
+
+
+
+</main>
+
+
+
+<footer class="wrap tiny muted">
+
+Tech-Selector Demo
+
+</footer>
+
+
+
+<script type="module">
+
+import { MACROS, loadMacro } from "./app/loader.js";
+
+import { pick, t, getLang, attachLangSelector } from "./app/i18n.js";
+
+import { setTitle, criterionLabel, nav } from "./app/render.js";
+
+async function main(){
+
+//   NAV
+
+document.getElementById("topNav").appendChild(nav("technologies.html"));
+
+attachLangSelector("langSelect");
+
+//   HELPERS
+
+function getParam(name, fallback=null)
+{
+  const u = new URL(window.location.href);
+
+  return u.searchParams.get(name) ?? fallback;
+}
+
+
+function setParam(name, value)
+{
+  const u = new URL(window.location.href);
+
+  u.searchParams.set(name, value);
+
+  window.location.href = u.toString();
+}
+
+//TEXT
+
+
+setTitle("pageTitle", {
+
+  en:"Technologies",
+
+  it:"Tecnologie"
+
+});
+
+
+
+document.getElementById("tH2").textContent =
+t({
+
+  en:"Benchmark mapping (LOW / MID / HIGH)",
+
+  it:"Benchmark (LOW / MID / HIGH)"
+
+});
+
+
+
+document.getElementById("macroLbl").textContent =
+t({
+
+  en:"Macro-area",
+
+  it:"Macro-area"
+
+});
+
+
+
+document.getElementById("macroHint").textContent =
+t({
+
+  en:"Choose which benchmark set to display",
+
+  it:"Scegli quali benchmark visualizzare"
+
+});
+
+//MACRO SELECTOR
+
+
+const macroSelect = document.getElementById("macroSelect");
+
+const macroBadge = document.getElementById("macroBadge");
+
+
+
+const options = [
+
+{
+id:"performance",
+label: MACROS.performance?.label || "Performance & Scalability"
+},
+
+{
+id:"architecture",
+label: MACROS.architecture?.label || "Architecture, Governance & Security"
+},
+
+{
+id:"economic",
+label: MACROS.economic?.label || "Economic Sustainability"
+},
+
+{
+id:"reliability",
+label: MACROS.reliability?.label || "Reliability, Continuity & Integrity"
+}
+
+];
+
+
+
+for (const opt of options)
+{
+
+const o = document.createElement("option");
+
+o.value = opt.id;
+
+o.textContent = opt.label;
+
+macroSelect.appendChild(o);
+
+}
+
+
+
+const activeMacro = getParam("macro","performance");
+
+macroSelect.value = activeMacro;
+
+macroBadge.textContent = activeMacro;
+
+
+
+macroSelect.addEventListener(
+
+"change",
+
+() => setParam("macro", macroSelect.value)
+
+);
+
+
+//   LOAD DATA
+
+const lang = getLang();
+
+const out = document.getElementById("out");
+
+
+
+let loaded;
+
+
+
+try
+{
+
+loaded = await loadMacro(activeMacro);
+
+}
+
+catch(err)
+{
+
+document.getElementById("pageSubtitle").textContent =
+t({
+
+en:"Error loading macro",
+
+it:"Errore caricamento macro"
+
+});
+
+throw err;
+
+}
+
+
+
+const criteria = loaded.criteria;
+
+const benchmarks = loaded.benchmarks;
+
+
+//   SUBTITLE
+
+const labelEn =
+benchmarks?.macro_area?.label_en ||
+MACROS[activeMacro]?.label ||
+activeMacro;
+
+
+
+const labelIt =
+benchmarks?.macro_area?.label_it ||
+labelEn;
+
+
+
+document.getElementById("pageSubtitle").textContent =
+t({
+
+en:`Macro-area: ${labelEn}`,
+
+it:`Macro-area: ${labelIt}`
+
+});
+
+
+//  RENDER
+
+out.innerHTML = "";
+
+
+
+if (!benchmarks?.technologies?.length)
+{
+
+out.innerHTML =
+`<div class="muted">
+
+${t({
+
+en:"No technologies found",
+
+it:"Nessuna tecnologia trovata"
+
+})}
+
+</div>`;
+
+return;
+
+}
+
+//TECHNOLOGY LIST
+
+
+for (const tech of benchmarks.technologies)
+{
+
+
+const box = document.createElement("div");
+
+box.className = "card";
+
+box.style.marginTop = "12px";
+
+
+
+const name = tech.label || tech.id;
+
+const id = tech.id;
+
+
+
+const baseline =
+tech.baseline_deployment
+?
+`<div class="tiny muted" style="margin-top:6px;">
+
+${t({
+
+en:"Baseline:",
+
+it:"Baseline:"
+
+})}
+
+${
+
+pick(tech.baseline_deployment,"") ||
+
+pick(tech.baseline_deployment,"en") ||
+
+pick(tech.baseline_deployment,"it") ||
+
+""
+
+}
+
+</div>`
+:
+"";
+
+
+
+box.innerHTML =
+`
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+
+<b>${name}</b>
+
+<span class="badge">${id}</span>
+
+</div>
+
+${baseline}
+`;
+
+
+
+const list = document.createElement("div");
+
+list.style.marginTop = "10px";
+
+
+
+for (const c of criteria.criteria)
+{
+
+
+const value =
+tech.values?.[c.id] ?? "—";
+
+
+
+const row = document.createElement("div");
+
+row.className = "compare-item";
+
+
+
+row.innerHTML =
+`
+<span>
+
+<b>${criterionLabel(c)}</b>
+
+<span class="badge">${c.id}</span>
+
+</span>
+
+<span class="badge">${value}</span>
+
+`;
+
+
+list.appendChild(row);
+
+
+}
+
+
+
+box.appendChild(list);
+
+out.appendChild(box);
+
+
+
+}
+}
+main();
+
+</script>
+
+
+</body>
+
+</html>

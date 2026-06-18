@@ -1,0 +1,259 @@
+{
+  "id": "mysql",
+  "label": "MySQL",
+  "values": {
+    "ps_throughput": "MID",
+    "ps_scalability": "MID",
+    "eco_baseline_footprint": "LOW",
+    "eco_variable_transaction_cost": "LOW",
+    "eco_storage_footprint": "LOW",
+    "rci_tamper_evidence_auditability": "LOW",
+    "rci_finality_rollback_resistance": "MID",
+    "rci_write_availability_fault_tolerance": "LOW",
+    "ags_control_distribution_governance": "LOW",
+    "ags_identity_access_governance": "MID",
+    "ags_collusion_resilience": "LOW"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 31.6,
+      "unit": "EUR/month",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 2,
+        "ram_gb": null,
+        "storage_gb": 20
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model.",
+      "source": "Framework cost model applied to MySQL Minimum Correctness Configuration (single-node standalone)",
+      "source_url": "https://dev.mysql.com/doc/"
+    },
+    "ps_throughput": {
+      "value": 500,
+      "unit": "TPS",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "estimation_note": "Conservative technology-level estimate for MySQL standalone (2 vCPU, 20 GB). Real-world benchmarks can exceed this value depending on workload and tuning, but are not directly transferable to the MCC baseline.",
+      "source": "MySQL 8.0 Reference Manual; industry benchmarks (Sysbench-based performance studies)",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/innodb-introduction.html"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0.0,
+      "unit": "EUR/transaction",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "MySQL architecture – absence of protocol-level transaction fees",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+    },
+    "eco_storage_footprint": {
+      "value": 20,
+      "unit": "GB",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "Framework baseline storage assumption for MySQL MCC",
+      "source_url": "https://dev.mysql.com/doc/"
+    },
+    "ps_scalability": {
+      "value": 0.5,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 1,
+          "motivation": "InnoDB supports concurrent local transaction execution through MVCC and row-level locking.",
+          "source": "MySQL 8.0 Reference Manual – InnoDB Locking and Transaction Model",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/innodb-locking.html"
+        },
+        "horizontal_partitioning": {
+          "value": 0,
+          "motivation": "The standalone MySQL architecture adopted as the framework baseline does not provide native distributed horizontal partitioning; horizontal scaling requires external architectural extensions beyond the base system.",
+          "source": "MySQL 8.0 Reference Manual – Partitioning and server architecture",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/partitioning-overview.html"
+        },
+        "absence_of_global_serialization": {
+          "value": 1,
+          "motivation": "MySQL does not require protocol-level global serialization of all writes across a shared distributed ledger. Transaction ordering is handled locally by the database engine.",
+          "source": "MySQL 8.0 Reference Manual – InnoDB Transaction Model",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/innodb-transaction-model.html"
+        },
+        "scalable_coordination_model": {
+          "value": 0,
+          "motivation": "The native standalone MySQL architecture does not provide a structurally distributed coordination model and therefore does not exhibit elastic coordination at technology baseline level.",
+          "source": "MySQL 8.0 Reference Manual – Server architecture and transaction processing",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        }
+      },
+      "source": "MySQL server architecture and transaction model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 0,
+          "motivation": "MySQL tables are mutable and do not enforce append-only semantics.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 0,
+          "motivation": "No native cryptographic chaining of records is implemented.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "cryptographic_write_authentication": {
+          "value": 0,
+          "motivation": "Authentication exists at user level, not as cryptographic transaction signing on each record write.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/access-control.html"
+        },
+        "independent_integrity_verification": {
+          "value": 0,
+          "motivation": "No trustless independent verification model exists in the native MySQL architecture.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        }
+      },
+      "source": "MySQL logging and data model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/binary-log.html"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "local_acid_commit",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 1,
+          "motivation": "Committed transactions are durable under ACID guarantees in the native database model.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/mysql-acid.html"
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 0,
+          "motivation": "No multi-node or multi-party confirmation exists in the standalone native configuration.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "After commit, rollback is not part of the normal transaction protocol at application level.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/mysql-acid.html"
+        }
+      },
+      "source": "MySQL ACID transaction model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/mysql-acid.html"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 0,
+          "motivation": "A standalone MySQL deployment depends on a single server receiving writes.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "quorum_based_write_continuation": {
+          "value": 0,
+          "motivation": "No quorum-based write continuation exists in the native standalone model.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 0,
+          "motivation": "No automatic failover exists in the native standalone configuration.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "multi_node_write_survivability": {
+          "value": 0,
+          "motivation": "No multi-node write survivability is structurally provided in the MCC or native standalone model.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        }
+      },
+      "source": "MySQL standalone deployment model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+    },
+    "ags_control_distribution_governance": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 0,
+          "motivation": "Database control is centralized under a single administrative authority.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 0,
+          "motivation": "No distributed or multi-entity validation model exists.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "validator_admission_independence": {
+          "value": 0,
+          "motivation": "There is no open or independently governed validator admission model.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 0,
+          "motivation": "The architecture does not define a distributed validator set at all.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        }
+      },
+      "source": "MySQL governance model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 1,
+          "motivation": "MySQL supports fine-grained privileges and roles.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/privileges-provided.html"
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 1,
+          "motivation": "User and role lifecycle can be managed within the system.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/access-control.html"
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "Identity governance is structurally centralized in the database administrator/operator.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/access-control.html"
+        }
+      },
+      "source": "MySQL access control model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/access-control.html"
+    },
+    "ags_collusion_resilience": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 0,
+          "motivation": "A single privileged actor can compromise the system.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "majority_compromise_required": {
+          "value": 0,
+          "motivation": "No majority threshold exists for compromise.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        },
+        "supermajority_compromise_required": {
+          "value": 0,
+          "motivation": "No supermajority threshold exists for compromise.",
+          "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+        }
+      },
+      "source": "MySQL centralized control model",
+      "source_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/"
+    }
+  }
+}

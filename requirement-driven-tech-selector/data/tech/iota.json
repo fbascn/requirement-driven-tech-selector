@@ -1,0 +1,261 @@
+{
+  "id": "iota",
+  "label": "IOTA",
+  "values": {
+    "ps_throughput": "HIGH",
+    "ps_scalability": "HIGH",
+    "eco_baseline_footprint": "MID",
+    "eco_variable_transaction_cost": "LOW",
+    "eco_storage_footprint": "LOW",
+    "rci_tamper_evidence_auditability": "HIGH",
+    "rci_finality_rollback_resistance": "HIGH",
+    "rci_write_availability_fault_tolerance": "HIGH",
+    "ags_control_distribution_governance": "HIGH",
+    "ags_identity_access_governance": "LOW",
+    "ags_collusion_resilience": "HIGH"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 76.0,
+      "unit": "EUR/month",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 4,
+        "ram_gb": null,
+        "storage_gb": 200
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model. The selected baseline is a framework normalization assumption, not the official mainnet validator requirement.",
+      "source": "Framework cost model applied to IOTA comparative MCC",
+      "source_url": "https://docs.iota.org/"
+    },
+    "ps_throughput": {
+      "value": 50000,
+      "unit": "TPS",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "estimation_note": "Official protocol-level throughput claim for Mysticeti-based IOTA. This is not a benchmark measured on the comparative MCC (1 validator + DAG replica, 4 vCPU, 200 GB), but a technology-level classification value derived from the native protocol architecture.",
+      "source": "IOTA Technical and Tokenomics Whitepaper (30 May 2025)",
+      "source_url": "https://www.iota.org/pdf/IOTA_Technical_and_Tokenomics_Whitepaper.pdf"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0.000267,
+      "unit": "EUR/transaction",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "estimation_note": "Approximate value derived from the FAQ average fee indication of 0.005 IOTA per average transaction.",
+      "source": "IOTA FAQ",
+      "source_url": "https://docs.iota.org/about-iota/FAQ"
+    },
+    "eco_storage_footprint": {
+      "value": 200,
+      "unit": "GB",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "source": "Framework baseline storage assumption for IOTA MCC",
+      "source_url": "https://docs.iota.org/"
+    },
+    "ps_scalability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 1,
+          "motivation": "Object-based execution and the owned-object fast path enable parallel processing of independent transactions.",
+          "source": "IOTA object model and transaction lifecycle",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/transaction-lifecycle"
+        },
+        "horizontal_partitioning": {
+          "value": 1,
+          "motivation": "The object model structurally partitions state across owned/shared objects rather than relying on a globally shared account state for every operation.",
+          "source": "IOTA whitepaper object model",
+          "source_url": "https://www.iota.org/pdf/IOTA_Technical_and_Tokenomics_Whitepaper.pdf"
+        },
+        "absence_of_global_serialization": {
+          "value": 1,
+          "motivation": "Owned-object transactions can bypass full global ordering on the fast path; global sequencing remains for checkpoint formation.",
+          "source": "IOTA transaction lifecycle and consensus documentation",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/consensus"
+        },
+        "scalable_coordination_model": {
+          "value": 1,
+          "motivation": "Mysticeti is documented as high-throughput, leaderless, DAG-oriented BFT coordination.",
+          "source": "IOTA consensus documentation and whitepaper",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/consensus"
+        }
+      },
+      "source": "IOTA architecture and consensus model",
+      "source_url": "https://docs.iota.org/about-iota/iota-architecture/consensus"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "Committed transactions form a DAG-based append-only history with checkpoints.",
+          "source_url": "https://www.iota.org/pdf/IOTA_Technical_and_Tokenomics_Whitepaper.pdf"
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Objects and transactions are cryptographically linked.",
+          "source_url": "https://www.iota.org/pdf/IOTA_Technical_and_Tokenomics_Whitepaper.pdf"
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions are signed and certified through quorum validator signatures.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/transaction-lifecycle"
+        },
+        "independent_integrity_verification": {
+          "value": 1,
+          "motivation": "Certificates, signatures and finalized checkpoints can be independently verified.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        }
+      },
+      "source": "IOTA object model, transaction lifecycle and validator committee",
+      "source_url": "https://docs.iota.org/about-iota/iota-architecture/transaction-lifecycle"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "quorum_certificate_and_checkpoint_based",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 1,
+          "motivation": "Commit is based on certificates signed by a quorum and finalized through checkpoints.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 1,
+          "motivation": "A quorum greater than two-thirds of voting power is required.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "No single validator can unilaterally revoke a certified or finalized transaction.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/transaction-lifecycle"
+        }
+      },
+      "source": "IOTA validator committee and transaction lifecycle documentation",
+      "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "configuration_note": "Technology-level score based on the real validator committee model, not on the normalized comparative MCC.",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 1,
+          "motivation": "Write requests can be handled by multiple validators in the committee.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "quorum_based_write_continuation": {
+          "value": 1,
+          "motivation": "The protocol continues as long as quorum conditions remain satisfied.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 1,
+          "motivation": "No single validator is required for system-wide write continuation.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/consensus"
+        },
+        "multi_node_write_survivability": {
+          "value": 1,
+          "motivation": "The committee model provides survivability against single-node failure when quorum remains available.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        }
+      },
+      "source": "IOTA validator committee and consensus model",
+      "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+    },
+    "ags_control_distribution_governance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 1,
+          "motivation": "State validation and commit depend on the validator committee, not on a single operator.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 1,
+          "motivation": "Transactions require quorum signatures from multiple validators.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "validator_admission_independence": {
+          "value": 1,
+          "motivation": "Validator participation is tied to delegated stake thresholds and protocol rules rather than a fixed enterprise permissioning authority.",
+          "source_url": "https://docs.iota.org/operator/validator-node/overview"
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 1,
+          "motivation": "The validator set is epoch-based and can change at reconfiguration boundaries.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        }
+      },
+      "source": "IOTA governance and validator committee model",
+      "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 0,
+          "motivation": "The object ownership model and cryptographic keys do not constitute a native enterprise IAM privilege framework.",
+          "source_url": "https://www.iota.org/pdf/IOTA_Technical_and_Tokenomics_Whitepaper.pdf"
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 0,
+          "motivation": "IOTA does not provide enterprise-style native identity lifecycle governance comparable to permissioned DLT membership services.",
+          "source_url": "https://docs.iota.org/about-iota/FAQ"
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "The protocol does not provide a native identity governance framework in the sense required by this criterion.",
+          "source_url": "https://docs.iota.org/about-iota/FAQ"
+        }
+      },
+      "source": "IOTA object model and permissionless network model",
+      "source_url": "https://docs.iota.org/about-iota/FAQ"
+    },
+    "ags_collusion_resilience": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 1,
+          "motivation": "A single validator cannot unilaterally compromise transaction integrity.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "majority_compromise_required": {
+          "value": 1,
+          "motivation": "Compromising safety requires control of a majority of validator voting power.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        },
+        "supermajority_compromise_required": {
+          "value": 1,
+          "motivation": "The BFT quorum threshold is greater than two-thirds of total voting power.",
+          "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+        }
+      },
+      "source": "IOTA validator committee and BFT quorum model",
+      "source_url": "https://docs.iota.org/about-iota/iota-architecture/validator-committee"
+    }
+  }
+}

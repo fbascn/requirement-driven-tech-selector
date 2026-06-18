@@ -1,0 +1,230 @@
+{
+  "id": "bitcoin",
+  "label": "Bitcoin",
+  "values": {
+    "ps_throughput": "LOW",
+    "ps_scalability": "LOW",
+    "eco_baseline_footprint": "MID",
+    "eco_variable_transaction_cost": "HIGH",
+    "eco_storage_footprint": "MID",
+    "rci_tamper_evidence_auditability": "HIGH",
+    "rci_finality_rollback_resistance": "MID",
+    "rci_write_availability_fault_tolerance": "MID",
+    "ags_control_distribution_governance": "HIGH",
+    "ags_identity_access_governance": "LOW",
+    "ags_collusion_resilience": "MID"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 78.0,
+      "unit": "EUR/month",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 2,
+        "ram_gb": 2,
+        "storage_gb": 600
+      },
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model. The adopted MCC assumes a non-pruned full node with full blockchain replication for structural comparability with other replicated-ledger technologies.",
+      "source": "Bitcoin Core full node requirements; framework normalized cost model",
+      "source_url": "https://bitcoin.org/en/full-node ; https://aws.amazon.com/ec2/pricing/on-demand/ ; https://aws.amazon.com/ebs/pricing/"
+    },
+    "ps_throughput": {
+      "value": 7,
+      "unit": "TPS",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "source": "Zhang et al., Speeding up block propagation in Bitcoin network, 2022",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S1389128622000238"
+    },
+    "eco_variable_transaction_cost": {
+      "value": 0.302,
+      "unit": "EUR/transaction",
+      "class": "HIGH",
+      "evaluation_level": "mcc",
+      "conversion_note": "0.3466 USD/tx converted using ECB reference rate 1 EUR = 1.1476 USD",
+      "source": "YCharts Bitcoin Average Transaction Fee, 15 March 2026; ECB USD reference exchange rate, 13 March 2026",
+      "source_url": "https://ycharts.com/indicators/bitcoin_average_transaction_fee ; https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/eurofxref-graph-usd.en.html"
+    },
+    "eco_storage_footprint": {
+      "value": 600,
+      "unit": "GB",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "source": "Bitcoin Core full node requirements; framework comparative baseline assumption",
+      "source_url": "https://bitcoin.org/en/full-node"
+    },
+    "ps_scalability": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 0,
+          "motivation": "No native real parallel ledger execution."
+        },
+        "horizontal_partitioning": {
+          "value": 0,
+          "motivation": "No native sharding or horizontal partitioning."
+        },
+        "absence_of_global_serialization": {
+          "value": 0,
+          "motivation": "Global serialization on a single blockchain is mandatory."
+        },
+        "scalable_coordination_model": {
+          "value": 0,
+          "motivation": "Coordination remains globally serialized via PoW and longest-chain logic."
+        }
+      },
+      "source": "Bitcoin Developer Guide; throughput literature",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://www.sciencedirect.com/science/article/abs/pii/S1389128622000238"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "Blockchain history is structurally append-only."
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Each block includes the hash of the previous block."
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions are cryptographically authenticated by signatures and scripts."
+        },
+        "independent_integrity_verification": {
+          "value": 1,
+          "motivation": "Full nodes can independently verify ledger validity and integrity."
+        }
+      },
+      "source": "Bitcoin Developer Guide; Bitcoin block reference; Bitcoin transactions reference; Bitcoin full node docs",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://developer.bitcoin.org/reference/block_chain.html ; https://developer.bitcoin.org/reference/transactions.html ; https://bitcoin.org/en/full-node"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "probabilistic",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 0,
+          "motivation": "Chain reorganization is possible, so commit is not structurally irreversible."
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 1,
+          "motivation": "Confirmation depends on chain extension by multiple actors."
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "A single ordinary actor cannot unilaterally roll back valid state."
+        }
+      },
+      "source": "Bitcoin Developer Guide",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 0.75,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 1,
+          "motivation": "The Bitcoin model does not depend on a single structurally privileged writer."
+        },
+        "quorum_based_write_continuation": {
+          "value": 0,
+          "motivation": "The model is not quorum-based in the classical BFT or replica-set sense."
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 1,
+          "motivation": "Write continuation is automatic as long as active hashpower exists."
+        },
+        "multi_node_write_survivability": {
+          "value": 1,
+          "motivation": "Failure of a single node does not structurally block write capability."
+        }
+      },
+      "source": "Bitcoin Developer Guide; Bitcoin full node docs",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://bitcoin.org/en/full-node"
+    },
+    "ags_control_distribution_governance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 1,
+          "motivation": "No single entity has unilateral structural authority over valid state."
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 1,
+          "motivation": "Validation is structurally distributed across independent actors."
+        },
+        "validator_admission_independence": {
+          "value": 1,
+          "motivation": "Participation does not require discretionary admission by a central authority."
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 1,
+          "motivation": "The validator set is not structurally closed."
+        }
+      },
+      "source": "Bitcoin full node docs; Bitcoin Developer Guide",
+      "source_url": "https://bitcoin.org/en/full-node ; https://developer.bitcoin.org/devguide/block_chain.html"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 0,
+          "motivation": "The protocol does not provide native organizational role differentiation."
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 0,
+          "motivation": "There is no native identity lifecycle governance."
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "There is no native distributed identity governance layer."
+        }
+      },
+      "source": "Bitcoin transactions reference; Bitcoin Developer Guide",
+      "source_url": "https://developer.bitcoin.org/reference/transactions.html ; https://developer.bitcoin.org/devguide/block_chain.html"
+    },
+    "ags_collusion_resilience": {
+      "value": 0.67,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "non_unilateral_compromise_possible": {
+          "value": 1,
+          "motivation": "A single ordinary actor cannot unilaterally compromise the ledger."
+        },
+        "majority_compromise_required": {
+          "value": 1,
+          "motivation": "A reliable attack on transaction history requires majority hashpower."
+        },
+        "supermajority_compromise_required": {
+          "value": 0,
+          "motivation": "The relevant threshold is majority, not supermajority."
+        }
+      },
+      "source": "Bitcoin Developer Guide",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html"
+    }
+  }
+}
