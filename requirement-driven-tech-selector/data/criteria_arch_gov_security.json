@@ -19,17 +19,20 @@
         "abbr": "CDSF",
         "name_en": "Control Distribution Score Factor",
         "name_it": "Fattore di distribuzione del controllo (CDSF)",
+        "symbol": "CDSF",
         "unit_en": "ratio (0..1)",
         "unit_it": "rapporto (0..1)"
       },
       "formula": {
-        "latex": "CDSF = (f1 + f2 + f3 + f4) / 4"
+        "latex": "CDSF = (f_1+f_2+f_3+f_4)/4",
+        "description_en": "Average of four binary structural properties (1 present, 0 absent).",
+        "description_it": "Media di quattro proprietà strutturali binarie (1 presente, 0 assente)."
       },
       "structural_properties": [
         "Absence of single-entity unilateral state authority",
         "Structural requirement for multi-entity validation",
-        "Validator admission independence",
-        "Absence of structurally fixed validator set"
+        "Distributed control over validator admission or governance participation",
+        "Absence of structurally fixed validator or governance participant set"
       ],
       "classes": {
         "LOW": "CDSF ≤ 0.25",
@@ -37,9 +40,19 @@
         "HIGH": "CDSF > 0.75"
       },
       "parameterization": {
-        "LOW": { "range": "CDSF ≤ 0.25" },
-        "MID": { "range": "0.25 < CDSF ≤ 0.75" },
-        "HIGH": { "range": "CDSF > 0.75" }
+        "LOW": {
+          "range": "CDSF ≤ 0.25",
+          "max_inclusive": 0.25
+        },
+        "MID": {
+          "range": "0.25 < CDSF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
+        },
+        "HIGH": {
+          "range": "CDSF > 0.75",
+          "min_exclusive": 0.75
+        }
       }
     },
     {
@@ -56,16 +69,19 @@
         "abbr": "IGSF",
         "name_en": "Identity Governance Score Factor",
         "name_it": "Fattore di governance identitaria (IGSF)",
+        "symbol": "IGSF",
         "unit_en": "ratio (0..1)",
         "unit_it": "rapporto (0..1)"
       },
       "formula": {
-        "latex": "IGSF = (f1 + f2 + f3) / 3"
+        "latex": "IGSF = (f_1+f_2+f_3)/3",
+        "description_en": "Average of three binary structural properties (1 present, 0 absent).",
+        "description_it": "Media di tre proprietà strutturali binarie (1 presente, 0 assente)."
       },
       "structural_properties": [
         "Native privilege differentiation capability",
         "Native identity lifecycle governance capability",
-        "Structural independence of identity governance from a single authority"
+        "Native enforceability of identity and access-governance rules as part of the platform’s governance model"
       ],
       "classes": {
         "LOW": "IGSF ≤ 0.25",
@@ -73,14 +89,24 @@
         "HIGH": "IGSF > 0.75"
       },
       "parameterization": {
-        "LOW": { "range": "IGSF ≤ 0.25" },
-        "MID": { "range": "0.25 < IGSF ≤ 0.75" },
-        "HIGH": { "range": "IGSF > 0.75" }
+        "LOW": {
+          "range": "IGSF ≤ 0.25",
+          "max_inclusive": 0.25
+        },
+        "MID": {
+          "range": "0.25 < IGSF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
+        },
+        "HIGH": {
+          "range": "IGSF > 0.75",
+          "min_exclusive": 0.75
+        }
       }
     },
     {
       "id": "ags_collusion_resilience",
-      "label_en": "Collusion Resilience",
+      "label_en": "Collusion Resistance",
       "label_it": "Resilienza alla collusione",
       "description_en": "Structural resistance to sustained compromise/collusion (proxy indicator), expressed as the threshold of colluding actors required to maintain invalid state as valid.",
       "description_it": "Resistenza strutturale a compromissione/collusione sostenuta (indicatore proxy), espressa come soglia di attori collusi necessaria a mantenere stato invalido come valido.",
@@ -90,16 +116,19 @@
       "measurement_type": "proxy_structural_indicator",
       "metric": {
         "abbr": "CRSF",
-        "name_en": "Collusion Resilience Score Factor",
+        "name_en": "Collusion Resistance Score Factor",
         "name_it": "Fattore di resilienza alla collusione (CRSF)",
+        "symbol": "CRSF",
         "unit_en": "ratio (0..1)",
         "unit_it": "rapporto (0..1)"
       },
       "formula": {
-        "latex": "CRSF = (f1 + f2 + f3) / 3"
+        "latex": "CRSF = (f_1+f_2+f_3)/3",
+        "description_en": "Average of three nested structural compromise-threshold properties (1 present, 0 absent), interpreted as cumulative safeguards.",
+        "description_it": "Media di tre proprietà strutturali annidate relative alla soglia di compromissione (1 presente, 0 assente), interpretate come salvaguardie cumulative."
       },
       "structural_properties": [
-        "Non-unilateral compromise possible",
+        "Non-unilateral compromise requirement",
         "Majority compromise required",
         "Supermajority compromise required"
       ],
@@ -109,9 +138,19 @@
         "HIGH": "CRSF > 0.75"
       },
       "parameterization": {
-        "LOW": { "range": "CRSF ≤ 0.25" },
-        "MID": { "range": "0.25 < CRSF ≤ 0.75" },
-        "HIGH": { "range": "CRSF > 0.75" }
+        "LOW": {
+          "range": "CRSF ≤ 0.25",
+          "max_inclusive": 0.25
+        },
+        "MID": {
+          "range": "0.25 < CRSF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
+        },
+        "HIGH": {
+          "range": "CRSF > 0.75",
+          "min_exclusive": 0.75
+        }
       }
     }
   ],

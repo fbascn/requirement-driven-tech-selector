@@ -20,6 +20,7 @@
 
   <main class="wrap">
 
+    <!-- Macro selector -->
     <div class="card" style="margin-bottom:12px;">
       <div class="controls">
         <div style="min-width:260px;">
@@ -35,6 +36,7 @@
 
     <div class="grid">
 
+      <!--Questions -->
       <section>
         <div class="card">
           <div class="controls" style="align-items:center;">
@@ -52,6 +54,7 @@
         <div id="form" style="margin-top:10px;"></div>
       </section>
 
+      <!-- Results + charts -->
       <section>
         <div class="card">
           <div class="controls" style="align-items:center;">
@@ -70,7 +73,9 @@
           </details>
         </div>
 
+        <!-- Radar + Bar block -->
         <div id="visualBlock" style="margin-top:12px;">
+          <!-- Radar -->
           <div class="card">
             <div class="controls" style="align-items:center;">
               <div>
@@ -99,6 +104,7 @@
             </div>
           </div>
 
+          <!-- Bar -->
           <div class="card" style="margin-top:12px;">
             <div class="controls" style="align-items:center;">
               <div>
@@ -131,23 +137,24 @@
 
   validateTechFiles();
 
+// Top nav + language selector
   document.getElementById("topNav").appendChild(nav("run.html"));
   attachLangSelector("langSelect");
 
   const lang = getLang();
-  const OVERALL_ORDER = ["performance", "architecture", "economic", "reliability"];
 
+// Helpers: URL params
   function getParam(name, fallback = null) {
     const u = new URL(window.location.href);
     return u.searchParams.get(name) ?? fallback;
   }
-
   function setParam(name, value) {
     const u = new URL(window.location.href);
     u.searchParams.set(name, value);
     window.location.href = u.toString();
   }
 
+// UI texts
   setTitle("pageTitle", { en: "Run", it: "Esecuzione" });
   document.getElementById("macroLbl").textContent = t({ en:"Macro-area", it:"Macro-area" });
   document.getElementById("macroHint").textContent = t({ en:"URL parameter: macro", it:"Parametro URL: macro" });
@@ -166,6 +173,7 @@
     document.getElementById("errDetails").textContent = details;
   }
 
+// Macro selector options
   const macroSelect = document.getElementById("macroSelect");
   const macroBadge = document.getElementById("macroBadge");
 
@@ -205,6 +213,7 @@
     });
   }
 
+// State
   let criteria = null, questions = null, benchmarks = null;
   let macrosLoaded = null;
   let lastResult = null;
@@ -213,12 +222,14 @@
   let radarChart = null;
   let barChart = null;
 
+// Load data
   try {
     if (activeMacro === "overall") {
-      const packs = await Promise.all(OVERALL_ORDER.map(id => loadMacro(id)));
+      const ids = ["performance", "architecture", "economic", "reliability"];
+      const packs = await Promise.all(ids.map(id => loadMacro(id)));
       macrosLoaded = packs.map((p, i) => ({
-        id: OVERALL_ORDER[i],
-        label: MACROS[OVERALL_ORDER[i]]?.label || OVERALL_ORDER[i],
+        id: ids[i],
+        label: MACROS[ids[i]]?.label || ids[i],
         criteria: p.criteria,
         questions: p.questions,
         benchmarks: p.benchmarks
@@ -235,13 +246,13 @@
     throw err;
   }
 
+//FORM BUILDERS
   const form = document.getElementById("form");
 
   function buildFormSingle(criteriaObj, questionsObj) {
     if (!questionsObj?.questions || !Array.isArray(questionsObj.questions)) {
       throw new Error(`buildFormSingle: invalid questionsObj (missing questions array)`);
     }
-
     const qBy = new Map(questionsObj.questions.map(q => [q.criterion_id, q]));
     const wrap = document.createElement("div");
 
@@ -309,38 +320,16 @@
         </div>
       `;
 
-      const defaultWeight = String(questionsObj.weight?.default ?? 3);
-      const weightWrap = document.createElement("div");
-      weightWrap.style.display = "flex";
-      weightWrap.style.gap = "10px";
-      weightWrap.style.flexWrap = "wrap";
-      weightWrap.style.marginTop = "8px";
+      const weightInp = document.createElement("input");
+      weightInp.type = "number";
+      weightInp.min = "1";
+      weightInp.max = "5";
+      weightInp.step = "1";
+      weightInp.value = String(questionsObj.weight?.default ?? 3);
+      weightInp.dataset.criterion = c.id;
+      weightInp.dataset.kind = "weight";
+      wRow.children[0].appendChild(weightInp);
 
-      for (let i = 1; i <= 5; i++) {
-        const lbl = document.createElement("label");
-        lbl.className = "compare-item";
-        lbl.style.borderTop = "0";
-        lbl.style.padding = "6px 10px";
-        lbl.style.display = "inline-flex";
-        lbl.style.alignItems = "center";
-        lbl.style.gap = "6px";
-
-        lbl.innerHTML = `
-          <input
-            type="radio"
-            name="w_${c.id}"
-            value="${i}"
-            data-criterion="${c.id}"
-            data-kind="weight"
-            ${String(i) === defaultWeight ? "checked" : ""}
-          />
-          <span>${i}</span>
-        `;
-
-        weightWrap.appendChild(lbl);
-      }
-
-      wRow.children[0].appendChild(weightWrap);
       card.appendChild(wRow);
       wrap.appendChild(card);
     }
@@ -352,10 +341,7 @@
     form.innerHTML = "";
     const blocks = {};
 
-    for (const macroId of OVERALL_ORDER) {
-      const m = macrosArray.find(x => x.id === macroId);
-      if (!m) continue;
-
+    for (const m of macrosArray) {
       const title = document.createElement("div");
       title.className = "card";
       title.style.marginTop = "10px";
@@ -372,7 +358,6 @@
         qBy: built.qBy
       };
     }
-
     return blocks;
   }
 
@@ -393,6 +378,7 @@
     document.getElementById("wHint").textContent = built.hint || "";
   }
 
+//USER PROFILE READING
   const MAP = { LOW: 0, MID: 1, HIGH: 2 };
   const invertLevel = (L) => (L === "LOW" ? "HIGH" : (L === "HIGH" ? "LOW" : "MID"));
 
@@ -402,7 +388,7 @@
 
     for (const c of criteriaObj.criteria) {
       const sel = document.querySelector(`input[type="radio"][name="d_${c.id}"]:checked`);
-      const inp = document.querySelector(`input[type="radio"][name="w_${c.id}"]:checked`);
+      const inp = document.querySelector(`input[data-criterion="${c.id}"][data-kind="weight"]`);
       const q = qByLocal.get(c.id);
 
       let level = sel?.value || "MID";
@@ -414,25 +400,16 @@
       const wBase = Number.isFinite(wRaw) ? wRaw : 3;
       weight[c.id] = Math.max(1, Math.min(5, wBase));
     }
-
     return { desired, weight };
   }
 
   function mergeCriteria(macros) {
-    const ordered = OVERALL_ORDER
-      .map(id => macros.find(m => m.id === id))
-      .filter(Boolean);
-
-    return { criteria: ordered.flatMap(m => m.criteria.criteria) };
+    return { criteria: macros.flatMap(m => m.criteria.criteria) };
   }
 
   function mergeBenchmarks(macros) {
-    const ordered = OVERALL_ORDER
-      .map(id => macros.find(m => m.id === id))
-      .filter(Boolean);
-
     const byTech = new Map();
-    for (const m of ordered) {
+    for (const m of macros) {
       for (const tech of m.benchmarks.technologies) {
         const existing = byTech.get(tech.id) || { id: tech.id, label: tech.label, values: {} };
         Object.assign(existing.values, tech.values || {});
@@ -446,29 +423,23 @@
   function mergeUser(blocks) {
     const desired = {};
     const weight = {};
-
-    for (const macroId of OVERALL_ORDER) {
-      const blk = blocks[macroId];
-      if (!blk) continue;
-
+    for (const blk of Object.values(blocks)) {
       const u = readUserSingle(blk.criteria, blk.qBy);
       Object.assign(desired, u.desired);
       Object.assign(weight, u.weight);
     }
-
     return { desired, weight };
   }
 
+//PRESET
   document.getElementById("preset").addEventListener("click", () => {
     const radios = document.querySelectorAll(`input[type="radio"][value="MID"]`);
     radios.forEach(r => r.checked = true);
-
-    const weightRadios = document.querySelectorAll(`input[type="radio"][data-kind="weight"]`);
-    weightRadios.forEach(w => {
-      w.checked = (w.value === "3");
-    });
+    const weights = document.querySelectorAll(`input[data-kind="weight"]`);
+    weights.forEach(w => w.value = "3");
   });
 
+//RENDER RANKING
   function renderRanking(result, badge="") {
     document.getElementById("empty").style.display = "none";
     const rankWrap = document.getElementById("ranking");
@@ -500,6 +471,7 @@
     lastResult = result;
   }
 
+  // ---------- VISUALS ----------
   const radarMode = document.getElementById("radarMode");
   const compareList = document.getElementById("compareList");
   const applySelection = document.getElementById("applySelection");
@@ -564,7 +536,7 @@
         { id:"m_performance",  type:"UP", label_en:"Performance & Scalability",            label_it:"Performance e Scalabilità" },
         { id:"m_architecture", type:"UP", label_en:"Architecture, Governance & Security",  label_it:"Architettura, governance e sicurezza" },
         { id:"m_economic",     type:"UP", label_en:"Economic Sustainability",              label_it:"Sostenibilità economica" },
-        { id:"m_reliability",  type:"UP", label_en:"Reliability, Continuity & Integrity",  label_it:"Affidabilità, continuità e integrità" }
+        { id:"m_reliability",  type:"UP", label_en:"Reliability, Continuity & Integrity",  label_it:"Affidabilità, continuità e integrità" },
       ]
     };
 
@@ -578,7 +550,6 @@
         num += w * (u.desired[c.id] ?? 1);
         den += w;
       }
-
       const avg = den ? (num / den) : 1;
       return Math.max(0, Math.min(2, Math.round(avg)));
     }
@@ -591,10 +562,7 @@
         m_reliability:  userMacroAvg("reliability")
       },
       weight: {
-        m_performance: 3,
-        m_architecture: 3,
-        m_economic: 3,
-        m_reliability: 3
+        m_performance:3, m_architecture:3, m_economic:3, m_reliability:3
       }
     };
 
@@ -605,30 +573,25 @@
     }
 
     const techList = [];
-    const baseRanking =
-      perMacroResults.performance?.ranking ||
-      perMacroResults.architecture?.ranking ||
-      perMacroResults.economic?.ranking ||
-      perMacroResults.reliability?.ranking ||
-      [];
+    const baseRanking = perMacroResults.performance?.ranking || perMacroResults.architecture?.ranking || [];
 
     for (const row of baseRanking) {
       const id = row.tech_id;
       const label = row.label;
 
-      const sP = perMacroResults.performance?.ranking.find(x => x.tech_id === id)?.score ?? 0;
-      const sA = perMacroResults.architecture?.ranking.find(x => x.tech_id === id)?.score ?? 0;
-      const sE = perMacroResults.economic?.ranking.find(x => x.tech_id === id)?.score ?? 0;
-      const sR = perMacroResults.reliability?.ranking.find(x => x.tech_id === id)?.score ?? 0;
+      const sP = perMacroResults.performance?.ranking.find(x=>x.tech_id===id)?.score ?? 0;
+      const sA = perMacroResults.architecture?.ranking.find(x=>x.tech_id===id)?.score ?? 0;
+      const sE = perMacroResults.economic?.ranking.find(x=>x.tech_id===id)?.score ?? 0;
+      const sR = perMacroResults.reliability?.ranking.find(x=>x.tech_id===id)?.score ?? 0;
 
       techList.push({
         id,
         label,
         values: {
-          m_performance: scoreToLevel(sP),
+          m_performance:  scoreToLevel(sP),
           m_architecture: scoreToLevel(sA),
-          m_economic: scoreToLevel(sE),
-          m_reliability: scoreToLevel(sR)
+          m_economic:     scoreToLevel(sE),
+          m_reliability:  scoreToLevel(sR)
         }
       });
     }
@@ -656,14 +619,13 @@
     if (radarChart) radarChart.destroy();
     radarChart = makeRadar(ctx, criteriaObj, userObj, techList);
 
-    const techRows = techIds.map(id => ranking.find(x => x.tech_id === id)).filter(Boolean);
+    const techRows = techIds.map(id => ranking.find(x=>x.tech_id===id)).filter(Boolean);
     renderLegend(t({en:"User", it:"Utente"}), techRows);
 
     const shown = techIds.length;
     const trunc = requested > shown
       ? ` — ${t({en:"showing", it:"mostro"})} ${shown}/${requested} (${t({en:"max", it:"max"})} ${MAX_SELECTED})`
       : "";
-
     radarStatus.textContent = `${t({en:"Radar lines", it:"Linee radar"})}: ${shown}${trunc}`;
   }
 
@@ -706,21 +668,18 @@
       const pack = lastResult.debug.__vizPack;
       updateBar(pack.criteria, pack.user, pack.benchmarks, lastResult.ranking);
     } else {
-      updateBar(criteria, lastResult.debug.user, benchmarks, lastResult.ranking);
+      updateBar(criteria, lastResult.debug.user, benchmarks, result.ranking);
     }
   });
 
+// COMPUTE 
   document.getElementById("compute").addEventListener("click", () => {
     try {
       if (activeMacro === "overall") {
         const perMacro = {};
-
-        for (const macroId of OVERALL_ORDER) {
-          const blk = overallBlocks[macroId];
-          if (!blk) continue;
-
+        for (const [mid, blk] of Object.entries(overallBlocks)) {
           const userM = readUserSingle(blk.criteria, blk.qBy);
-          perMacro[macroId] = computeRanking(blk.criteria, userM, blk.benchmarks);
+          perMacro[mid] = computeRanking(blk.criteria, userM, blk.benchmarks);
         }
 
         const mergedCriteria = mergeCriteria(macrosLoaded);
@@ -733,9 +692,7 @@
 
         const vizPack = buildOverallVizData(perMacro, overallBlocks);
         overallResult.debug.per_macro = Object.fromEntries(
-          OVERALL_ORDER
-            .filter(k => perMacro[k])
-            .map(k => [k, perMacro[k].ranking])
+          Object.entries(perMacro).map(([k,v]) => [k, v.ranking])
         );
         overallResult.debug.__vizPack = {
           criteria: vizPack.overallCriteria,
@@ -758,7 +715,9 @@
         return;
       }
 
+// SINGLE MACRO
       const user = readUserSingle(criteria, qBy);
+
       sessionStorage.setItem(`techSelector:userProfile:${activeMacro}`, JSON.stringify(user));
 
       const result = computeRanking(criteria, user, benchmarks);
@@ -785,6 +744,7 @@
     }
   });
 
+// Initial state
   document.getElementById("empty").style.display = "none";
   document.getElementById("ranking").innerHTML =
     `<div class="muted">${t({en:"Set answers and press Compute.", it:"Imposta le risposte e premi Calcola."})}</div>`;

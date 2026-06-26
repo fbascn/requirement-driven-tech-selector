@@ -66,30 +66,30 @@
       "id": "eco_storage_footprint_req",
       "criterion_id": "eco_storage_footprint",
       "answers": [
-        {
-          "level": "LOW",
-          "label_it": "Vincolo molto restrittivo",
-          "label_en": "Very tight storage growth",
-          "description_it": "Lo storage deve rimanere limitato nel tempo. La crescita dello storage deve essere contenuta.",
-          "description_en": "Storage must remain limited over time. Storage growth must be kept under control."
-        },
-        {
-          "level": "MID",
-          "label_it": "Vincolo moderato",
-          "label_en": "Moderate storage growth",
-          "description_it": "Lo storage può crescere progressivamente. Una crescita moderata è sostenibile.",
-          "description_en": "Storage may grow progressively. Moderate growth is sustainable."
-        },
-        {
-          "level": "HIGH",
-          "label_it": "Vincolo non restrittivo",
-          "label_en": "Storage growth not a constraint",
-          "description_it": "La crescita dello storage non rappresenta un vincolo significativo. Il sistema può sostenere anche footprint elevati.",
-          "description_en": "Storage growth is not a significant constraint. The system can sustain even large storage footprints."
-        }
-      ],
-      "question_it": "Nel medio-lungo periodo, quale livello di crescita dello storage è sostenibile per il sistema?",
-      "question_en": "In the medium to long term, what level of storage growth is sustainable for the system?",
+  {
+    "level": "LOW",
+    "label_it": "Vincolo di storage molto restrittivo",
+    "label_en": "Very tight storage constraint",
+    "description_it": "Lo storage deve rimanere limitato nel tempo. Il sistema dovrebbe evitare tecnologie con requisiti elevati di storage persistente.",
+    "description_en": "Storage must remain limited over time. The system should avoid technologies with large persistent storage requirements."
+  },
+  {
+    "level": "MID",
+    "label_it": "Vincolo di storage moderato",
+    "label_en": "Moderate storage constraint",
+    "description_it": "Requisiti moderati di storage persistente sono sostenibili. Una crescita progressiva può essere tollerata entro limiti controllati.",
+    "description_en": "Moderate persistent storage requirements are sustainable. Progressive growth can be tolerated within controlled limits."
+  },
+  {
+    "level": "HIGH",
+    "label_it": "Carico di storage non prioritario",
+    "label_en": "Storage burden not a major constraint",
+    "description_it": "Sono accettabili requisiti elevati di storage persistente. Crescita dello storage e footprint di base non rappresentano vincoli primari per il sistema.",
+    "description_en": "Large persistent storage requirements are acceptable. Storage growth and baseline storage footprint are not primary constraints for the system."
+  }
+],
+      "question_it": "Quale livello di carico di storage persistente è sostenibile per il sistema nel tempo?",
+      "question_en": "What level of persistent storage burden is sustainable for the system over time?",
       "help_it": "",
       "help_en": ""
     }

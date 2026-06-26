@@ -1,0 +1,233 @@
+{
+  "id": "algorand",
+  "label": "Algorand",
+  "values": {
+    "ps_throughput": "HIGH",
+    "ps_scalability": "MID",
+    "eco_baseline_footprint": "MID",
+    "eco_variable_transaction_cost": "LOW",
+    "eco_storage_footprint": "LOW",
+    "rci_tamper_evidence_auditability": "HIGH",
+    "rci_finality_rollback_resistance": "HIGH",
+    "rci_write_availability_fault_tolerance": "HIGH",
+    "ags_control_distribution_governance": "HIGH",
+    "ags_identity_access_governance": "LOW",
+    "ags_collusion_resilience": "HIGH"
+  },
+  "measurements": {
+    "eco_baseline_footprint": {
+      "value": 128.0,
+      "unit": "EUR/month",
+      "class": "MID",
+      "evaluation_level": "mcc",
+      "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
+      "components": {
+        "vcpu": 8,
+        "ram_gb": null,
+        "storage_gb": 100
+      },
+      "method_note": "The MCC assumes 1 participation/validator-class node maintaining a pruned local ledger state. RAM is considered included in compute cost and is not monetized separately in the framework cost model.",
+      "source": "Framework cost model applied to the Algorand MCC; Algorand node documentation",
+      "source_url": "https://developer.algorand.org/docs/"
+    },
+    "ps_throughput": {
+      "value": 2000,
+      "unit": "TPS",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "estimation_note": "Representative benchmark-level Layer-1 throughput estimate for Algorand, positioned in the low-thousands TPS range. The selected value is intended to reflect Algorand's high-throughput positioning in the literature while remaining conservative relative to peak or marketing-oriented claims.",
+      "source": "Algorand whitepaper and official Algorand documentation",
+      "source_url": "https://www.algorand.com/resources/research ; https://developer.algorand.org/docs/"
+    },
+    "eco_variable_transaction_cost": {
+  "value": 0.001,
+  "unit": "EUR/transaction",
+  "class": "LOW",
+  "evaluation_level": "technology_native_operational",
+  "conversion_note": "Algorand's minimum transaction fee is 0.001 ALGO. The EUR value is treated here as an approximate benchmark-level low protocol fee and is aligned with the benchmark appendix representation.",
+  "source": "Algorand transaction fee documentation",
+  "source_url": "https://developer.algorand.org/docs/get-details/transactions/fees/"
+},
+    "eco_storage_footprint": {
+      "value": 100,
+      "unit": "GB",
+      "class": "LOW",
+      "evaluation_level": "mcc",
+      "method_note": "Baseline storage footprint for the adopted MCC, assuming a pruned local ledger state rather than a full archival node.",
+      "source": "Framework baseline storage assumption for Algorand MCC; Algorand node documentation",
+      "source_url": "https://developer.algorand.org/docs/run-a-node/setup/install/"
+    },
+    "ps_scalability": {
+      "value": 0.5,
+      "unit": "score_0_1",
+      "class": "MID",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "parallel_execution": {
+          "value": 0,
+          "motivation": "The evaluated Algorand Layer-1 baseline does not provide native ledger-level parallel execution through partitioned transaction execution."
+        },
+        "horizontal_partitioning": {
+          "value": 0,
+          "motivation": "The adopted baseline does not include native horizontal state partitioning or sharding."
+        },
+        "absence_of_global_serialization": {
+          "value": 1,
+          "motivation": "Algorand avoids proof-of-work-style global mining competition and relies on committee-based agreement, reducing global coordination bottlenecks compared with longest-chain architectures."
+        },
+        "scalable_coordination_model": {
+          "value": 1,
+          "motivation": "Pure Proof-of-Stake with VRF-based committee selection provides a scalable coordination model that does not require all participants to communicate with all others in every consensus step."
+        }
+      },
+      "source": "Algorand Pure Proof-of-Stake consensus model",
+      "source_url": "https://developer.algorand.org/docs/get-details/consensus/"
+    },
+    "rci_tamper_evidence_auditability": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "append_only_structural_history": {
+          "value": 1,
+          "motivation": "The Algorand ledger maintains an append-only sequence of committed blocks and transactions."
+        },
+        "cryptographic_linkage_between_records": {
+          "value": 1,
+          "motivation": "Blocks and transactions are cryptographically linked through the blockchain structure and authenticated state transitions."
+        },
+        "cryptographic_write_authentication": {
+          "value": 1,
+          "motivation": "Transactions and consensus messages are authenticated through digital signatures."
+        },
+        "independent_integrity_verification": {
+          "value": 1,
+          "motivation": "Full nodes and participating consensus nodes can independently verify ledger integrity under the protocol rules."
+        }
+      },
+      "source": "Algorand ledger, transaction, and consensus documentation",
+      "source_url": "https://developer.algorand.org/docs/get-details/ledger/ ; https://developer.algorand.org/docs/get-details/transactions/"
+    },
+    "rci_finality_rollback_resistance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "finality_type": "protocol_enforced_non_probabilistic_finality",
+      "factors": {
+        "protocol_enforced_irreversible_commit": {
+          "value": 1,
+          "motivation": "Committed blocks are final under Algorand consensus and are not subject to probabilistic longest-chain reorganization."
+        },
+        "multi_party_confirmation_requirement": {
+          "value": 1,
+          "motivation": "Finality requires distributed committee-based agreement under the Pure Proof-of-Stake protocol."
+        },
+        "absence_of_unilateral_rollback_capability": {
+          "value": 1,
+          "motivation": "No single validator or ordinary participant can unilaterally roll back committed state under the native protocol model."
+        }
+      },
+      "source": "Algorand Pure Proof-of-Stake consensus and finality documentation",
+      "source_url": "https://developer.algorand.org/docs/get-details/consensus/"
+    },
+    "rci_write_availability_fault_tolerance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "configuration_note": "Score refers to Algorand's native distributed consensus model, not to the single-node MCC in isolation.",
+      "factors": {
+        "absence_of_single_writer_requirement": {
+          "value": 1,
+          "motivation": "Block production and agreement do not depend on a structurally privileged permanent writer node."
+        },
+        "quorum_based_write_continuation": {
+          "value": 1,
+          "motivation": "Progress depends on distributed protocol participation rather than on a single server or primary node."
+        },
+        "automatic_write_continuation_mechanism": {
+          "value": 1,
+          "motivation": "The protocol continues automatically while consensus assumptions remain satisfied, without requiring manual failover."
+        },
+        "multi_node_write_survivability": {
+          "value": 1,
+          "motivation": "The consensus process tolerates individual node failures within the fault assumptions of the protocol."
+        }
+      },
+      "source": "Algorand consensus and participation-node model",
+      "source_url": "https://developer.algorand.org/docs/get-details/consensus/"
+    },
+    "ags_control_distribution_governance": {
+      "value": 1.0,
+      "unit": "score_0_1",
+      "class": "HIGH",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "absence_of_single_entity_unilateral_state_authority": {
+          "value": 1,
+          "motivation": "No single entity has unilateral authority over valid ledger state under the native Algorand protocol."
+        },
+        "structural_requirement_for_multi_entity_validation": {
+          "value": 1,
+          "motivation": "Validation and block confirmation structurally require distributed consensus participation."
+        },
+        "validator_admission_independence": {
+          "value": 1,
+          "motivation": "Consensus participation is governed by protocol-level stake-based participation and cryptographic committee selection rather than discretionary enterprise admission."
+        },
+        "absence_of_structurally_fixed_validator_set": {
+          "value": 1,
+          "motivation": "Consensus participation is dynamically selected under protocol rules rather than fixed to a closed validator set."
+        }
+      },
+      "source": "Algorand Pure Proof-of-Stake validator and committee-selection model",
+      "source_url": "https://developer.algorand.org/docs/get-details/consensus/"
+    },
+    "ags_identity_access_governance": {
+      "value": 0.0,
+      "unit": "score_0_1",
+      "class": "LOW",
+      "evaluation_level": "technology_native_operational",
+      "factors": {
+        "native_privilege_differentiation_capability": {
+          "value": 0,
+          "motivation": "Algorand does not implement a native enterprise identity and privilege governance framework comparable to RBAC or consortium access-control systems."
+        },
+        "native_identity_lifecycle_governance_capability": {
+          "value": 0,
+          "motivation": "There is no native protocol-level identity lifecycle governance comparable to permissioned enterprise platforms."
+        },
+        "structural_independence_of_identity_governance_from_a_single_authority": {
+          "value": 0,
+          "motivation": "The protocol does not provide a native identity and access governance framework in the sense required by this criterion."
+        }
+      },
+      "source": "Algorand account model and public permissionless protocol design",
+      "source_url": "https://developer.algorand.org/docs/get-details/accounts/"
+    },
+    "ags_collusion_resilience": {
+  "value": 1.0,
+  "unit": "score_0_1",
+  "class": "HIGH",
+  "evaluation_level": "technology_native_operational",
+  "factors": {
+    "non_unilateral_compromise_requirement": {
+      "value": 1,
+      "motivation": "A single participant cannot unilaterally compromise ledger validity or finality under the native protocol assumptions."
+    },
+    "majority_compromise_required": {
+      "value": 1,
+      "motivation": "Effective compromise requires coordinated control of a large fraction of the relevant consensus participation power rather than unilateral action."
+    },
+    "supermajority_compromise_required": {
+      "value": 1,
+      "motivation": "Violation of Byzantine-agreement safety assumptions requires compromise beyond the tolerated Byzantine threshold, corresponding to a supermajority-style compromise condition under the framework."
+    }
+  },
+  "source": "Algorand Byzantine Agreement and Pure Proof-of-Stake security model",
+  "source_url": "https://developer.algorand.org/docs/get-details/consensus/"
+}
+  }
+}

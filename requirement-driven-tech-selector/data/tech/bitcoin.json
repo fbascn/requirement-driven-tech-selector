@@ -9,7 +9,7 @@
     "eco_storage_footprint": "MID",
     "rci_tamper_evidence_auditability": "HIGH",
     "rci_finality_rollback_resistance": "MID",
-    "rci_write_availability_fault_tolerance": "MID",
+    "rci_write_availability_fault_tolerance": "HIGH",
     "ags_control_distribution_governance": "HIGH",
     "ags_identity_access_governance": "LOW",
     "ags_collusion_resilience": "MID"
@@ -23,10 +23,11 @@
       "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
       "components": {
         "vcpu": 2,
-        "ram_gb": 2,
-        "storage_gb": 600
+        "storage_gb": 600,
+        "cpu_component_eur_month": 30,
+        "storage_component_eur_month": 48
       },
-      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model. The adopted MCC assumes a non-pruned full node with full blockchain replication for structural comparability with other replicated-ledger technologies.",
+      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model. The adopted MCC assumes a non-pruned validating full node with full blockchain replication for structural comparability with other replicated-ledger technologies.",
       "source": "Bitcoin Core full node requirements; framework normalized cost model",
       "source_url": "https://bitcoin.org/en/full-node ; https://aws.amazon.com/ec2/pricing/on-demand/ ; https://aws.amazon.com/ebs/pricing/"
     },
@@ -35,16 +36,17 @@
       "unit": "TPS",
       "class": "LOW",
       "evaluation_level": "technology_native_operational",
-      "source": "Zhang et al., Speeding up block propagation in Bitcoin network, 2022",
-      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S1389128622000238"
+      "source": "Bitcoin throughput literature and Bitcoin mainnet baseline transaction capacity estimates",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S1389128622000238 ; https://developer.bitcoin.org/devguide/block_chain.html"
     },
     "eco_variable_transaction_cost": {
       "value": 0.302,
       "unit": "EUR/transaction",
       "class": "HIGH",
-      "evaluation_level": "mcc",
-      "conversion_note": "0.3466 USD/tx converted using ECB reference rate 1 EUR = 1.1476 USD",
-      "source": "YCharts Bitcoin Average Transaction Fee, 15 March 2026; ECB USD reference exchange rate, 13 March 2026",
+      "evaluation_level": "technology_native_operational",
+      "benchmark_period": "March 2026",
+      "conversion_note": "Indicative benchmark-period average transaction fee derived from Bitcoin fee statistics and converted to EUR using the benchmark exchange-rate convention.",
+      "source": "YCharts Bitcoin Average Transaction Fee; ECB USD/EUR exchange rate",
       "source_url": "https://ycharts.com/indicators/bitcoin_average_transaction_fee ; https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/eurofxref-graph-usd.en.html"
     },
     "eco_storage_footprint": {
@@ -52,6 +54,7 @@
       "unit": "GB",
       "class": "MID",
       "evaluation_level": "mcc",
+      "interpretation": "Baseline persistent storage allocation associated with the adopted MCC host for a validating Bitcoin full node, not the minimum disk occupancy of a pruned or otherwise specialized node configuration.",
       "source": "Bitcoin Core full node requirements; framework comparative baseline assumption",
       "source_url": "https://bitcoin.org/en/full-node"
     },
@@ -63,22 +66,22 @@
       "factors": {
         "parallel_execution": {
           "value": 0,
-          "motivation": "No native real parallel ledger execution."
+          "motivation": "Bitcoin does not provide native parallel execution of independent ledger operations at Layer 1."
         },
-        "horizontal_partitioning": {
+        "horizontal_partitioning_sharding": {
           "value": 0,
-          "motivation": "No native sharding or horizontal partitioning."
+          "motivation": "Bitcoin does not include native sharding or horizontal partitioning of ledger state."
         },
-        "absence_of_global_serialization": {
+        "absence_of_mandatory_global_serialisation": {
           "value": 0,
-          "motivation": "Global serialization on a single blockchain is mandatory."
+          "motivation": "Global serialization through a single canonical blockchain remains structurally required."
         },
         "scalable_coordination_model": {
           "value": 0,
-          "motivation": "Coordination remains globally serialized via PoW and longest-chain logic."
+          "motivation": "Coordination remains globally serialized through Proof-of-Work and longest-chain consensus."
         }
       },
-      "source": "Bitcoin Developer Guide; throughput literature",
+      "source": "Bitcoin Developer Guide; throughput and blockchain architecture literature",
       "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://www.sciencedirect.com/science/article/abs/pii/S1389128622000238"
     },
     "rci_tamper_evidence_auditability": {
@@ -89,22 +92,22 @@
       "factors": {
         "append_only_structural_history": {
           "value": 1,
-          "motivation": "Blockchain history is structurally append-only."
+          "motivation": "Bitcoin maintains an append-only blockchain history of committed blocks and transactions."
         },
         "cryptographic_linkage_between_records": {
           "value": 1,
-          "motivation": "Each block includes the hash of the previous block."
+          "motivation": "Each block header includes the hash of the previous block and commits to transactions through a Merkle root."
         },
         "cryptographic_write_authentication": {
           "value": 1,
-          "motivation": "Transactions are cryptographically authenticated by signatures and scripts."
+          "motivation": "Transactions are authenticated through digital signatures and script-based spending conditions."
         },
         "independent_integrity_verification": {
           "value": 1,
-          "motivation": "Full nodes can independently verify ledger validity and integrity."
+          "motivation": "Validating full nodes can independently verify ledger validity and integrity."
         }
       },
-      "source": "Bitcoin Developer Guide; Bitcoin block reference; Bitcoin transactions reference; Bitcoin full node docs",
+      "source": "Bitcoin Developer Guide; Bitcoin block reference; Bitcoin transactions reference; Bitcoin full node documentation",
       "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://developer.bitcoin.org/reference/block_chain.html ; https://developer.bitcoin.org/reference/transactions.html ; https://bitcoin.org/en/full-node"
     },
     "rci_finality_rollback_resistance": {
@@ -112,48 +115,50 @@
       "unit": "score_0_1",
       "class": "MID",
       "evaluation_level": "technology_native_operational",
-      "finality_type": "probabilistic",
+      "finality_type": "probabilistic chain-based finality",
       "factors": {
-        "protocol_enforced_irreversible_commit": {
+        "protocol_enforced_finality": {
           "value": 0,
-          "motivation": "Chain reorganization is possible, so commit is not structurally irreversible."
+          "motivation": "Bitcoin does not provide protocol-enforced irreversible finality in the sense captured by this methodology; committed history may in principle be reorganized under sufficient adversarial hash power."
         },
         "multi_party_confirmation_requirement": {
           "value": 1,
-          "motivation": "Confirmation depends on chain extension by multiple actors."
+          "motivation": "Transaction confirmation depends on continued chain extension through distributed mining participation rather than on unilateral acceptance by a single actor."
         },
         "absence_of_unilateral_rollback_capability": {
           "value": 1,
-          "motivation": "A single ordinary actor cannot unilaterally roll back valid state."
+          "motivation": "No ordinary single actor can unilaterally revert confirmed Bitcoin history under the native protocol model."
         }
       },
-      "source": "Bitcoin Developer Guide",
-      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html"
+      "assumption_note": "FRSF captures structural rollback resistance under standard Bitcoin mainnet protocol assumptions and should not be interpreted as a complete adversarial security proof against all possible mining, network, or censorship attacks.",
+      "source": "Bitcoin Developer Guide; Nakamoto consensus model",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://bitcoin.org/bitcoin.pdf"
     },
     "rci_write_availability_fault_tolerance": {
-      "value": 0.75,
+      "value": 1.0,
       "unit": "score_0_1",
-      "class": "MID",
+      "class": "HIGH",
       "evaluation_level": "technology_native_operational",
       "factors": {
-        "absence_of_single_writer_requirement": {
+        "absence_of_mandatory_single_writer_dependency": {
           "value": 1,
-          "motivation": "The Bitcoin model does not depend on a single structurally privileged writer."
+          "motivation": "Bitcoin does not rely on a single structurally privileged writer node for transaction inclusion or chain progression."
         },
         "quorum_based_write_continuation": {
-          "value": 0,
-          "motivation": "The model is not quorum-based in the classical BFT or replica-set sense."
+          "value": 1,
+          "motivation": "Write continuation is sustained as long as a sufficient subset of mining participation remains active to extend the chain under the native protocol model."
         },
         "automatic_write_continuation_mechanism": {
           "value": 1,
-          "motivation": "Write continuation is automatic as long as active hashpower exists."
+          "motivation": "The protocol continues operation automatically without centralized failover procedures as long as mining participation persists and network connectivity is maintained."
         },
-        "multi_node_write_survivability": {
+        "single_node_failure_survivability_of_write_path": {
           "value": 1,
-          "motivation": "Failure of a single node does not structurally block write capability."
+          "motivation": "Failure of a single node does not structurally disable the system's ability to accept and confirm transactions."
         }
       },
-      "source": "Bitcoin Developer Guide; Bitcoin full node docs",
+      "assumption_note": "WASF measures structural write-continuity properties under standard Bitcoin mainnet protocol assumptions and does not claim immunity against all possible liveness, censorship, or network-partition attacks.",
+      "source": "Bitcoin Developer Guide; Bitcoin full node documentation",
       "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://bitcoin.org/en/full-node"
     },
     "ags_control_distribution_governance": {
@@ -162,25 +167,25 @@
       "class": "HIGH",
       "evaluation_level": "technology_native_operational",
       "factors": {
-        "absence_of_single_entity_unilateral_state_authority": {
+        "absence_of_unilateral_state_authority": {
           "value": 1,
-          "motivation": "No single entity has unilateral structural authority over valid state."
+          "motivation": "No single entity can unilaterally determine the valid Bitcoin ledger state under the native protocol model."
         },
         "structural_requirement_for_multi_entity_validation": {
           "value": 1,
-          "motivation": "Validation is structurally distributed across independent actors."
+          "motivation": "Valid chain progression and transaction confirmation emerge from distributed mining and validation under common consensus rules rather than from unilateral control by a single actor."
         },
-        "validator_admission_independence": {
+        "distributed_control_over_validator_admission_or_governance_participation": {
           "value": 1,
-          "motivation": "Participation does not require discretionary admission by a central authority."
+          "motivation": "Participation in transaction validation and block production does not require discretionary admission by a central authority."
         },
-        "absence_of_structurally_fixed_validator_set": {
+        "absence_of_immutable_control_concentration": {
           "value": 1,
-          "motivation": "The validator set is not structurally closed."
+          "motivation": "The participant set is open and not structurally locked to a single authority, with control distributed across an evolving set of miners and validating nodes."
         }
       },
-      "source": "Bitcoin full node docs; Bitcoin Developer Guide",
-      "source_url": "https://bitcoin.org/en/full-node ; https://developer.bitcoin.org/devguide/block_chain.html"
+      "source": "Bitcoin full node documentation; Bitcoin Developer Guide; Nakamoto consensus model",
+      "source_url": "https://bitcoin.org/en/full-node ; https://developer.bitcoin.org/devguide/block_chain.html ; https://bitcoin.org/bitcoin.pdf"
     },
     "ags_identity_access_governance": {
       "value": 0.0,
@@ -190,15 +195,15 @@
       "factors": {
         "native_privilege_differentiation_capability": {
           "value": 0,
-          "motivation": "The protocol does not provide native organizational role differentiation."
+          "motivation": "Bitcoin does not provide a native privilege-differentiation model for organizational roles or enterprise access governance."
         },
         "native_identity_lifecycle_governance_capability": {
           "value": 0,
-          "motivation": "There is no native identity lifecycle governance."
+          "motivation": "Bitcoin does not provide a native identity lifecycle governance capability for creating, revoking, or modifying platform identities and privileges."
         },
-        "structural_independence_of_identity_governance_from_a_single_authority": {
+        "native_access_governance_enforceability": {
           "value": 0,
-          "motivation": "There is no native distributed identity governance layer."
+          "motivation": "Identity and access governance are not enforced through a protocol-native access-governance layer."
         }
       },
       "source": "Bitcoin transactions reference; Bitcoin Developer Guide",
@@ -210,21 +215,22 @@
       "class": "MID",
       "evaluation_level": "technology_native_operational",
       "factors": {
-        "non_unilateral_compromise_possible": {
+        "non_unilateral_compromise_requirement": {
           "value": 1,
-          "motivation": "A single ordinary actor cannot unilaterally compromise the ledger."
+          "motivation": "Compromising Bitcoin consensus outcomes is not a unilateral action for an ordinary single actor under the native protocol model."
         },
-        "majority_compromise_required": {
+        "majority_compromise_requirement": {
           "value": 1,
-          "motivation": "A reliable attack on transaction history requires majority hashpower."
+          "motivation": "Successful history-rewriting or majority attacks require control of a majority of active hash power."
         },
-        "supermajority_compromise_required": {
+        "supermajority_compromise_requirement": {
           "value": 0,
-          "motivation": "The relevant threshold is majority, not supermajority."
+          "motivation": "Bitcoin does not require a supermajority compromise threshold for the relevant consensus attacks captured by this methodology; the critical threshold is majority hash power rather than a two-thirds-type supermajority."
         }
       },
-      "source": "Bitcoin Developer Guide",
-      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html"
+      "assumption_note": "CRSF is assessed as a structural compromise-threshold proxy under Bitcoin mainnet protocol assumptions, not as a complete adversarial analysis of all bribery, censorship, or mining-centralization risks.",
+      "source": "Bitcoin Developer Guide; Nakamoto consensus model",
+      "source_url": "https://developer.bitcoin.org/devguide/block_chain.html ; https://bitcoin.org/bitcoin.pdf"
     }
   }
 }

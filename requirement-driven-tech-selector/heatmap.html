@@ -274,9 +274,10 @@
     hr.appendChild(th0);
 
     for (const c of criteriaObj.criteria) {
-      const th = document.createElement("th");
-      th.textContent = criterionLabel(c);
-      hr.appendChild(th);
+  const th = document.createElement("th");
+  th.textContent = c.metric?.abbr || criterionLabel(c);
+  th.title = criterionLabel(c);
+  hr.appendChild(th);
     }
     thead.appendChild(hr);
     table.appendChild(thead);

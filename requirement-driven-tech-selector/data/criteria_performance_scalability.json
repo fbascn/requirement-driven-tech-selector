@@ -18,16 +18,17 @@
       "label_en": "Throughput",
       "label_it": "Throughput",
       "type": "UP",
-      "description_en": "Sustained computational capacity (TPS/ops/sec) assessed on a comparable baseline, used as a structural class rather than a deployment-specific point value.",
-      "description_it": "Capacità computazionale sostenibile (TPS/ops/sec) valutata su baseline comparabile, usata come classe strutturale e non come valore puntuale dipendente dal deployment.",
+      "description_en": "Sustained transaction-processing capacity (TPS/ops/sec) assessed on a comparable baseline, used as a qualitative class rather than a deployment-specific point value.",
+      "description_it": "Capacità sostenibile di elaborazione e commit di transazioni (TPS/ops/sec) valutata su baseline comparabile, usata come classe qualitativa e non come valore puntuale dipendente dal deployment.",
       "metric": {
         "name_en": "Sustained Throughput",
         "name_it": "Throughput sostenuto",
+        "abbr": "THR",
         "symbol": "TPS",
         "unit_en": "transactions per second (TPS)",
         "unit_it": "transazioni al secondo (TPS)",
-        "measurement_note_en": "Throughput is used to classify technologies by order of magnitude of computational capacity, not to compare deployment-specific point values.",
-        "measurement_note_it": "Il throughput è usato per classificare le tecnologie per ordine di grandezza della capacità computazionale e non per confrontare valori puntuali dipendenti da specifiche configurazioni."
+        "measurement_note_en": "Throughput is used to classify technologies by order of magnitude of transaction-processing capacity, not to compare deployment-specific point values.",
+        "measurement_note_it": "Il throughput è usato per classificare le tecnologie per ordine di grandezza della capacità di elaborazione di transazioni e non per confrontare valori puntuali dipendenti da specifiche configurazioni."
       },
       "formula": {
         "latex": "TPS",
@@ -39,19 +40,19 @@
       "parameterization": {
         "LOW": {
           "range_text_en": "< 100 TPS",
-          "range_text_it": "< 100",
+          "range_text_it": "< 100 TPS",
           "min_inclusive": 0,
           "max_exclusive": 100
         },
         "MID": {
           "range_text_en": "100 – 1,000 TPS",
-          "range_text_it": "100 – 1000",
+          "range_text_it": "100 – 1000 TPS",
           "min_inclusive": 100,
           "max_inclusive": 1000
         },
         "HIGH": {
           "range_text_en": "> 1,000 TPS",
-          "range_text_it": "> 1000",
+          "range_text_it": "> 1000 TPS",
           "min_exclusive": 1000,
           "max": "INF"
         }
@@ -65,18 +66,19 @@
       "label_it": "Scalabilità",
       "type": "UP",
       "description_en": "Structural ability to grow capacity as load increases, assessed via the presence of architecture-level scalability enablers (proxy structural indicator).",
-      "description_it": "Capacità strutturale di crescere al crescere del carico, valutata tramite la presenza di meccanismi architetturali abilitanti la scalabilità (proxy strutturale).",
+      "description_it": "Capacità strutturale di crescere al crescere del carico, valutata tramite la presenza di meccanismi architetturali abilitanti la scalabilità (indicatore proxy strutturale).",
       "metric": {
-        "name_en": "Structural Scalability Factor",
-        "name_it": "Fattore di scalabilità strutturale",
-        "symbol": "ScF",
+        "name_en": "Scalability Score Factor",
+        "name_it": "Fattore di scalabilità (SCSF)",
+        "abbr": "SCSF",
+        "symbol": "SCSF",
         "unit_en": "normalized score (0–1)",
         "unit_it": "punteggio normalizzato (0–1)",
-        "measurement_note_en": "The Scalability Factor is an intrinsic architectural property and does not depend on operational configurations or the contingent number of nodes.",
-        "measurement_note_it": "Lo Scalability Factor rappresenta una proprietà architetturale intrinseca della tecnologia e non dipende da configurazioni operative specifiche o dal numero contingente di nodi."
+        "measurement_note_en": "The Scalability Score Factor is an intrinsic architectural property and does not depend on operational tuning or the contingent number of nodes.",
+        "measurement_note_it": "Lo Scalability Score Factor rappresenta una proprietà architetturale intrinseca della tecnologia e non dipende da configurazioni operative specifiche o dal numero contingente di nodi."
       },
       "formula": {
-        "latex": "ScF = \\frac{f_1 + f_2 + f_3 + f_4}{4}, \\quad f_k \\in \\{0,1\\}",
+        "latex": "SCSF = (f_1+f_2+f_3+f_4)/4",
         "description_en": "Average of four binary architecture features (1 present, 0 absent).",
         "description_it": "Media di quattro feature architetturali binarie (1 presente, 0 assente)."
       },
@@ -84,19 +86,19 @@
       "motivation_it": "La scalabilità rappresenta una proprietà architetturale relativa al potenziale strutturale di crescita della tecnologia e non una prestazione osservata. L’utilizzo di un indicatore strutturale consente una valutazione comparabile e indipendente dal deployment, coerentemente con la distinzione tra capacità di runtime e proprietà architetturali.",
       "parameterization": {
         "LOW": {
-          "range_text_en": "SF ≤ 0.25",
-          "range_text_it": "ScF ≤ 0.25",
+          "range_text_en": "SCSF ≤ 0.25",
+          "range_text_it": "SCSF ≤ 0.25",
           "max_inclusive": 0.25
         },
         "MID": {
-          "range_text_en": "0.25 < SF ≤ 0.75",
-          "range_text_it": "0.25 < ScF ≤ 0.75",
+          "range_text_en": "0.25 < SCSF ≤ 0.75",
+          "range_text_it": "0.25 < SCSF ≤ 0.75",
           "min_exclusive": 0.25,
           "max_inclusive": 0.75
         },
         "HIGH": {
-          "range_text_en": "SF > 0.75",
-          "range_text_it": "ScF > 0.75",
+          "range_text_en": "SCSF > 0.75",
+          "range_text_it": "SCSF > 0.75",
           "min_exclusive": 0.75,
           "max": "INF"
         }
@@ -135,14 +137,14 @@
         "steps_en": [
           "Define the reference baseline variant for the technology (technology-level configuration to be evaluated).",
           "For each feature f1–f4, assess presence (1) or absence (0) using authoritative technical documentation and/or peer-reviewed architecture papers.",
-          "Compute SF as the average of the four feature values.",
-          "Map SF to LOW/MID/HIGH using the predefined thresholds."
+          "Compute SCSF as the average of the four feature values.",
+          "Map SCSF to LOW/MID/HIGH using the predefined thresholds."
         ],
         "steps_it": [
           "Definire la variante baseline di riferimento per la tecnologia (configurazione technology-level valutata).",
           "Per ciascuna feature f1–f4, valutare presenza (1) o assenza (0) usando documentazione tecnica autorevole e/o paper architetturali peer-reviewed.",
-          "Calcolare SF come media dei quattro valori.",
-          "Mappare SF su LOW/MID/HIGH usando le soglie predefinite."
+          "Calcolare SCSF come media dei quattro valori.",
+          "Mappare SCSF su LOW/MID/HIGH usando le soglie predefinite."
         ]
       },
       "measurement_type": "proxy_structural_indicator",

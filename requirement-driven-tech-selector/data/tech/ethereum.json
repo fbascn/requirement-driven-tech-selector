@@ -31,19 +31,19 @@
       "factors": {
         "parallel_execution": {
           "value": 0,
-          "motivation": "Execution at Layer-1 is structurally constrained by a globally shared state."
+          "motivation": "Layer-1 execution is structurally constrained by a globally shared state."
         },
-        "horizontal_partitioning": {
+        "horizontal_partitioning_sharding": {
           "value": 0,
-          "motivation": "No native sharding mechanism is included in the adopted Layer-1 baseline."
+          "motivation": "No native execution-layer sharding mechanism is included in the adopted Layer-1 baseline."
         },
-        "absence_of_global_serialization": {
+        "absence_of_mandatory_global_serialisation": {
           "value": 0,
-          "motivation": "Global ordering is required across the ledger."
+          "motivation": "A global ordering mechanism is structurally required across Layer-1 transactions."
         },
         "scalable_coordination_model": {
           "value": 0,
-          "motivation": "Consensus requires global coordination across validators."
+          "motivation": "Consensus requires global coordination across the validator set."
         }
       },
       "source": "Derived from Ethereum Layer-1 architecture and official scaling documentation",
@@ -55,21 +55,21 @@
       "class": "HIGH",
       "evaluation_level": "technology_native_operational",
       "factors": {
-        "absence_of_single_entity_unilateral_state_authority": {
+        "absence_of_unilateral_state_authority": {
           "value": 1,
-          "motivation": "No single entity can unilaterally control valid ledger state in Ethereum’s native operational model."
+          "motivation": "No single entity can unilaterally determine the valid Ethereum ledger state under the native operational model."
         },
         "structural_requirement_for_multi_entity_validation": {
           "value": 1,
-          "motivation": "Validation structurally requires distributed validator participation."
+          "motivation": "Validation and finality structurally require distributed validator participation."
         },
-        "validator_admission_independence": {
+        "distributed_control_over_validator_admission_or_governance_participation": {
           "value": 1,
-          "motivation": "Validator participation is not controlled by a discretionary central authority."
+          "motivation": "Validator participation is governed by permissionless staking-based protocol rules rather than discretionary admission by a single authority."
         },
-        "absence_of_structurally_fixed_validator_set": {
+        "absence_of_immutable_control_concentration": {
           "value": 1,
-          "motivation": "The validator set is not structurally closed."
+          "motivation": "The validator set is not structurally locked to a single authority and can evolve through Ethereum's native participation mechanism."
         }
       },
       "source": "Ethereum Foundation, Staking and Proof-of-Stake documentation",
@@ -83,15 +83,15 @@
       "factors": {
         "native_privilege_differentiation_capability": {
           "value": 0,
-          "motivation": "Ethereum does not provide native role-based privilege differentiation comparable to enterprise identity governance systems."
+          "motivation": "Ethereum does not provide native platform-level role-based privilege differentiation comparable to enterprise identity governance systems."
         },
         "native_identity_lifecycle_governance_capability": {
           "value": 0,
-          "motivation": "Ethereum does not include a native identity lifecycle governance layer."
+          "motivation": "Ethereum does not include a native mechanism for creating, revoking, or modifying platform identities and privileges."
         },
-        "structural_independence_of_identity_governance_from_a_single_authority": {
+        "native_access_governance_enforceability": {
           "value": 0,
-          "motivation": "No native distributed identity governance framework is built into the protocol."
+          "motivation": "Identity and access governance are delegated to smart contracts, applications, or external administration rather than enforced by a protocol-native access-governance layer."
         }
       },
       "source": "Ethereum Foundation, Accounts documentation",
@@ -103,19 +103,20 @@
       "class": "HIGH",
       "evaluation_level": "technology_native_operational",
       "factors": {
-        "non_unilateral_compromise_possible": {
+        "non_unilateral_compromise_requirement": {
           "value": 1,
-          "motivation": "A single validator cannot unilaterally compromise the system under the native Ethereum model."
+          "motivation": "A single validator or operator cannot unilaterally compromise Ethereum consensus outcomes under the native protocol model."
         },
-        "majority_compromise_required": {
+        "majority_compromise_requirement": {
           "value": 1,
-          "motivation": "Relevant attacks require majority stake control."
+          "motivation": "Compromising consensus outcomes or sustaining adversarial control over canonical chain progression requires control of a majority-scale fraction of validator stake."
         },
-        "supermajority_compromise_required": {
+        "supermajority_compromise_requirement": {
           "value": 1,
-          "motivation": "Finality-related compromise requires supermajority consensus thresholds."
+          "motivation": "Subverting finalized-state consensus outcomes requires supermajority control of validator stake under Ethereum's Proof-of-Stake finality assumptions."
         }
       },
+      "assumption_note": "CRSF is assessed as a structural compromise-threshold proxy under Ethereum mainnet protocol assumptions, not as a complete adversarial analysis of bribery, liveness, or out-of-band collusion attacks.",
       "source": "Ethereum Foundation, Proof-of-Stake consensus documentation",
       "source_url": "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
     },
@@ -127,18 +128,20 @@
       "formula": "BIF = (vCPU x 15 EUR) + (Storage GB x 0.08 EUR)",
       "components": {
         "vcpu": 4,
-        "ram_gb": null,
-        "storage_gb": 2000
+        "storage_gb": 2000,
+        "cpu_component_eur_month": 60,
+        "storage_component_eur_month": 160
       },
       "source": "Derived from MCC (4 vCPU, 2000 GB) and normalized AWS-based cost model",
       "source_url": "https://aws.amazon.com/ec2/pricing/on-demand/"
     },
     "eco_variable_transaction_cost": {
-      "value": 0.16,
+      "value": 0.08,
       "unit": "EUR/transaction",
       "class": "HIGH",
-      "evaluation_level": "mcc",
-      "source": "Derived from 30-day average transaction fee using Etherscan Average Transaction Fee Chart",
+      "evaluation_level": "technology_native_operational",
+      "benchmark_period": "March 2026",
+      "source": "Indicative benchmark-period average derived from Ethereum average transaction fee statistics and converted to EUR",
       "source_url": "https://etherscan.io/chart/avg-txfee-usd"
     },
     "eco_storage_footprint": {
@@ -146,6 +149,7 @@
       "unit": "GB",
       "class": "HIGH",
       "evaluation_level": "mcc",
+      "interpretation": "Baseline persistent storage allocation associated with the adopted MCC host, not the minimum pruned database size of a specific client snapshot.",
       "source": "Geth Documentation, Hardware requirements",
       "source_url": "https://geth.ethereum.org/docs/getting-started/hardware-requirements"
     },
@@ -157,15 +161,15 @@
       "factors": {
         "append_only_structural_history": {
           "value": 1,
-          "motivation": "The blockchain is structurally append-only."
+          "motivation": "Ethereum maintains an append-only blockchain history of committed blocks and transactions."
         },
         "cryptographic_linkage_between_records": {
           "value": 1,
-          "motivation": "Blocks and transactions are linked through cryptographic hashes."
+          "motivation": "Blocks and transactions are linked through cryptographic hashes within the blockchain structure."
         },
         "cryptographic_write_authentication": {
           "value": 1,
-          "motivation": "Transactions are cryptographically signed."
+          "motivation": "Transactions are authenticated through digital signatures."
         },
         "independent_integrity_verification": {
           "value": 1,
@@ -180,21 +184,22 @@
       "unit": "score_0_1",
       "class": "HIGH",
       "evaluation_level": "technology_native_operational",
-      "finality_type": "deterministic (PoS finality layer)",
+      "finality_type": "protocol-enforced PoS finality under Ethereum mainnet consensus assumptions",
       "factors": {
-        "protocol_enforced_irreversible_commit": {
+        "protocol_enforced_finality": {
           "value": 1,
-          "motivation": "Ethereum provides protocol-native PoS finality through its finality layer."
+          "motivation": "Once finalized, committed blocks are structurally rollback-resistant under protocol-compliant operation, and rollback would require violation of Ethereum's Proof-of-Stake finality assumptions through large-scale validator collusion."
         },
         "multi_party_confirmation_requirement": {
           "value": 1,
-          "motivation": "Finality requires distributed validator confirmation rather than unilateral acceptance."
+          "motivation": "Finality requires validator participation through the Proof-of-Stake consensus and finality process rather than unilateral acceptance."
         },
         "absence_of_unilateral_rollback_capability": {
           "value": 1,
-          "motivation": "Rollback is not structurally achievable by a single actor under the native protocol model."
+          "motivation": "No single actor can unilaterally revert finalized Ethereum blocks under the native protocol model."
         }
       },
+      "assumption_note": "FRSF captures structural rollback resistance under Ethereum mainnet protocol assumptions and should not be interpreted as a complete proof of immunity against all liveness or network-level attacks.",
       "source": "Ethereum Foundation, Proof-of-Stake consensus documentation",
       "source_url": "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
     },
@@ -204,23 +209,24 @@
       "class": "HIGH",
       "evaluation_level": "technology_native_operational",
       "factors": {
-        "absence_of_single_writer_requirement": {
+        "absence_of_mandatory_single_writer_dependency": {
           "value": 1,
-          "motivation": "The native Ethereum operational model does not rely on a single structurally privileged writer."
+          "motivation": "Ethereum does not rely on a single structurally privileged writer node for transaction inclusion."
         },
         "quorum_based_write_continuation": {
           "value": 1,
-          "motivation": "Write continuation depends on distributed consensus rather than on a single primary node."
+          "motivation": "Write continuation depends on distributed validator consensus rather than on a single primary node."
         },
         "automatic_write_continuation_mechanism": {
           "value": 1,
-          "motivation": "The native protocol continues operation without centralized manual failover."
+          "motivation": "The protocol continues operation automatically as long as a sufficient validator quorum remains active under protocol assumptions."
         },
-        "multi_node_write_survivability": {
+        "single_node_failure_survivability_of_write_path": {
           "value": 1,
-          "motivation": "The native validator-based model preserves write continuity through distributed participation."
+          "motivation": "Failure of a single node does not structurally disable Ethereum's ability to accept and confirm transactions."
         }
       },
+      "assumption_note": "WASF measures structural write-continuity properties under standard protocol assumptions and does not claim immunity against all possible liveness, censorship, or network-partition attacks.",
       "source": "Ethereum Foundation, Consensus mechanisms documentation",
       "source_url": "https://ethereum.org/en/developers/docs/consensus-mechanisms/"
     }

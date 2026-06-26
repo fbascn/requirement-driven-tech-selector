@@ -9,7 +9,9 @@
       "description_en": "Structural capability of the technology to make unauthorized data modifications detectable and independently verifiable, based exclusively on intrinsic architectural and cryptographic properties, independent of operational controls or deployment configurations.",
       "description_it": "Capacità strutturale della tecnologia di rendere rilevabili e verificabili in modo indipendente eventuali modifiche non autorizzate ai dati, basata esclusivamente su proprietà architetturali e crittografiche intrinseche, indipendenti da controlli operativi o configurazioni di deployment.",
       "formula": {
-        "latex": "TESF = (f1 + f2 + f3 + f4) / 4"
+        "latex": "TESF = (f_1+f_2+f_3+f_4)/4",
+        "description_en": "Average of four binary structural features (1 present, 0 absent).",
+        "description_it": "Media di quattro feature strutturali binarie (1 presente, 0 assente)."
       },
       "features": [
         "Append-only structural history",
@@ -25,18 +27,23 @@
         "abbr": "TESF",
         "name_en": "Tamper-Evidence Score Factor",
         "name_it": "Fattore di tamper-evidence (TESF)",
+        "symbol": "TESF",
         "unit_en": "ratio (0..1)",
         "unit_it": "rapporto (0..1)"
       },
       "parameterization": {
         "LOW": {
-          "range": "TESF ≤ 0.25"
+          "range": "TESF ≤ 0.25",
+          "max_inclusive": 0.25
         },
         "MID": {
-          "range": "0.25 < TESF ≤ 0.75"
+          "range": "0.25 < TESF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
         },
         "HIGH": {
-          "range": "TESF > 0.75"
+          "range": "TESF > 0.75",
+          "min_exclusive": 0.75
         }
       }
     },
@@ -49,7 +56,9 @@
       "description_en": "Structural capability of the protocol to ensure that committed operations cannot be reversed or altered unilaterally, based on intrinsic consensus and validation mechanisms independent of operational procedures.",
       "description_it": "Capacità strutturale del protocollo di garantire che le operazioni confermate non possano essere revertite o alterate unilateralmente, basata su meccanismi intrinseci di consenso e validazione indipendenti da procedure operative.",
       "formula": {
-        "latex": "FSF = (f1 + f2 + f3) / 3"
+        "latex": "FRSF = (f_1+f_2+f_3)/3",
+        "description_en": "Average of three binary structural features (1 present, 0 absent).",
+        "description_it": "Media di tre feature strutturali binarie (1 presente, 0 assente)."
       },
       "features": [
         "Protocol-enforced irreversible commit",
@@ -61,21 +70,26 @@
       "measurement_type": "proxy_structural_indicator",
       "direction": "UP",
       "metric": {
-        "abbr": "FSF",
-        "name_en": "Finality Score Factor",
-        "name_it": "Fattore di finalità (FSF)",
+        "abbr": "FRSF",
+        "name_en": "Finality and Rollback Resistance Score Factor",
+        "name_it": "Fattore di finalità e resistenza al rollback (FRSF)",
+        "symbol": "FRSF",
         "unit_en": "ratio (0..1)",
         "unit_it": "rapporto (0..1)"
       },
       "parameterization": {
         "LOW": {
-          "range": "FSF ≤ 0.25"
+          "range": "FRSF ≤ 0.25",
+          "max_inclusive": 0.25
         },
         "MID": {
-          "range": "0.25 < FSF ≤ 0.75"
+          "range": "0.25 < FRSF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
         },
         "HIGH": {
-          "range": "FSF > 0.75"
+          "range": "FRSF > 0.75",
+          "min_exclusive": 0.75
         }
       }
     },
@@ -88,7 +102,9 @@
       "description_en": "Structural capability of the system to maintain write operations in the presence of faults, based on intrinsic replication, quorum, and fault tolerance mechanisms independent of deployment-specific configurations.",
       "description_it": "Capacità strutturale del sistema di mantenere le operazioni di scrittura in presenza di guasti, basata su meccanismi intrinseci di replica, quorum e tolleranza ai guasti indipendenti da configurazioni specifiche di deployment.",
       "formula": {
-        "latex": "WASF = (f1 + f2 + f3 + f4) / 4"
+        "latex": "WASF = (f_1+f_2+f_3+f_4)/4",
+        "description_en": "Average of four binary structural features (1 present, 0 absent).",
+        "description_it": "Media di quattro feature strutturali binarie (1 presente, 0 assente)."
       },
       "features": [
         "Absence of single-writer requirement",
@@ -104,18 +120,23 @@
         "abbr": "WASF",
         "name_en": "Write Availability Score Factor",
         "name_it": "Fattore di continuità delle scritture (WASF)",
+        "symbol": "WASF",
         "unit_en": "ratio (0..1)",
         "unit_it": "rapporto (0..1)"
       },
       "parameterization": {
         "LOW": {
-          "range": "WASF ≤ 0.25"
+          "range": "WASF ≤ 0.25",
+          "max_inclusive": 0.25
         },
         "MID": {
-          "range": "0.25 < WASF ≤ 0.75"
+          "range": "0.25 < WASF ≤ 0.75",
+          "min_exclusive": 0.25,
+          "max_inclusive": 0.75
         },
         "HIGH": {
-          "range": "WASF > 0.75"
+          "range": "WASF > 0.75",
+          "min_exclusive": 0.75
         }
       }
     }

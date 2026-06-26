@@ -34,35 +34,35 @@
       "id": "ags_control_distribution_governance_req",
       "question_en": "What level of control and validation distribution is required for the system?"
     },
+{
+  "criterion_id": "ags_identity_access_governance",
+  "question_it": "Quale livello di capacità nativa di gestione delle identità e dei permessi è richiesto dalla tecnologia?",
+  "question_en": "What level of native identity and permission management capability is required from the technology itself?",
+  "answers": [
     {
-      "criterion_id": "ags_identity_access_governance",
-      "question_it": "Quale livello di gestione strutturata delle identità e dei permessi è richiesto?",
-      "answers": [
-        {
-          "level": "LOW",
-          "label_it": "Gestione non strutturata",
-          "label_en": "Unstructured management",
-          "description_it": "Non è necessario che il sistema includa meccanismi nativi per la gestione di identità e permessi. Tipico di sistemi con pochi utenti o gestione operativa esterna.",
-          "description_en": "No native mechanisms for identity and permission management are required. Typical for few-user systems or when managed externally."
-        },
-        {
-          "level": "MID",
-          "label_it": "Gestione strutturata centralizzata",
-          "label_en": "Centralized structured management",
-          "description_it": "È necessario poter definire identità e permessi, anche se gestiti da un’autorità centrale.",
-          "description_en": "You need to define identities and permissions, even if managed by a central authority."
-        },
-        {
-          "level": "HIGH",
-          "label_it": "Gestione strutturata distribuita",
-          "label_en": "Distributed structured management",
-          "description_it": "È richiesto che identità e permessi possano essere gestiti in modo strutturale e distribuito tra più organizzazioni.",
-          "description_en": "Identities and permissions must be managed structurally and distributed across multiple organizations."
-        }
-      ],
-      "id": "ags_identity_access_governance_req",
-      "question_en": "What level of structured identity and permission management is required?"
+      "level": "LOW",
+      "label_it": "Governance nativa delle identità non richiesta",
+      "label_en": "No native identity governance required",
+      "description_it": "Il sistema non richiede meccanismi nativi della tecnologia per definire identità, controllare accessi o gestire permessi. Identità e permessi possono essere gestiti esternamente o in modo operativo.",
+      "description_en": "The system does not need technology-native mechanisms for identity definition, access control, or permission management. Identities and permissions can be handled externally or in an ad hoc manner."
     },
+    {
+      "level": "MID",
+      "label_it": "Gestione nativa di identità e permessi richiesta",
+      "label_en": "Native identity and permission management required",
+      "description_it": "Il sistema richiede supporto nativo della tecnologia per definire identità, ruoli o permessi e per controllare quali attori possono eseguire specifiche operazioni.",
+      "description_en": "The system requires technology-native support for defining identities, roles, or permissions, and for controlling which actors can perform specific operations."
+    },
+    {
+      "level": "HIGH",
+      "label_it": "Governance nativa avanzata delle identità richiesta",
+      "label_en": "Advanced native identity governance required",
+      "description_it": "Il sistema richiede supporto nativo non solo per definire identità e permessi, ma anche per governare operazioni di ciclo di vita come creazione, revoca, modifica ed enforcement delle regole di accesso come parte della piattaforma stessa.",
+      "description_en": "The system requires technology-native support not only for defining identities and permissions, but also for governing identity lifecycle operations such as creation, revocation, modification, and enforcement of access-governance rules as part of the platform itself."
+    }
+  ],
+  "id": "ags_identity_access_governance_req"
+},
     {
       "criterion_id": "ags_collusion_resilience",
       "question_it": "Quale livello di resistenza alla compromissione o collusione è richiesto per il sistema?",

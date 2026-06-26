@@ -8,26 +8,31 @@
       "id": "bitcoin",
       "label": "Bitcoin"
     },
-    {
-      "id": "corda",
-      "label": "Corda"
-    },	
-    {
+	{
       "id": "hyperledger_fabric",
       "label": "Hyperledger Fabric"
     },
     {
+      "id": "corda",
+      "label": "Corda"
+    },	
+    
+    {
       "id": "iota",
       "label": "IOTA Rebased"
+    },
+	{
+      "id": "avalanche",
+      "label": "Avalanche"
     },
     {
       "id": "quorum",
       "label": "ConsenSys Quorum"
     },
-    {
-      "id": "avalanche",
-      "label": "Avalanche"
-    },	
+	{
+      "id": "algorand",
+      "label": "Algorand"
+    },
     {
       "id": "mysql",
       "label": "MySql"
@@ -36,6 +41,5 @@
       "id": "mongodb",
       "label": "MongoDB"
     }
-
   ]
 }

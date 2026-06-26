@@ -3,7 +3,7 @@
   "label": "MongoDB",
   "values": {
     "ps_throughput": "MID",
-    "ps_scalability": "MID",
+    "ps_scalability": "LOW",
     "eco_baseline_footprint": "MID",
     "eco_variable_transaction_cost": "LOW",
     "eco_storage_footprint": "LOW",
@@ -12,11 +12,11 @@
     "rci_write_availability_fault_tolerance": "MID",
     "ags_control_distribution_governance": "LOW",
     "ags_identity_access_governance": "MID",
-    "ags_collusion_resilience": "MID"
+    "ags_collusion_resilience": "LOW"
   },
   "measurements": {
     "eco_baseline_footprint": {
-      "value": 94.8,
+      "value": 104.4,
       "unit": "EUR/month",
       "class": "MID",
       "evaluation_level": "mcc",
@@ -24,10 +24,10 @@
       "components": {
         "vcpu": 6,
         "ram_gb": null,
-        "storage_gb": 60
+        "storage_gb": 180
       },
-      "method_note": "RAM is considered included in compute cost and is not monetized separately in the operationalized framework model.",
-      "source": "Framework cost model applied to MongoDB Minimum Correctness Configuration (3-node replica set: 1 primary + 2 secondary)",
+      "method_note": "The MCC assumes a 3-node MongoDB replica set with 2 vCPUs and 60 GB of storage per node, corresponding to 6 total vCPUs and 180 GB of total baseline storage. RAM is considered included in compute cost and is not monetized separately in the framework cost model.",
+      "source": "Framework cost model applied to MongoDB Minimum Correctness Configuration (3-node replica set: 1 primary and 2 secondary nodes)",
       "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-architectures/"
     },
     "ps_throughput": {
@@ -35,8 +35,8 @@
       "unit": "TPS",
       "class": "MID",
       "evaluation_level": "technology_native_operational",
-      "estimation_note": "Prudential technology-level estimate for a minimal 3-node replica set without sharding, used only for framework classification. The value is not a benchmark of the MCC but an order-of-magnitude estimate consistent with MongoDB's general-purpose database architecture.",
-      "source": "MongoDB replication architecture and replica set operational model",
+      "estimation_note": "Throughput estimate for the adopted 3-node replica-set baseline under default write concern w:1, used for framework-level classification rather than as a maximum benchmark claim. The value reflects a throughput-oriented operational estimate, not a majority-confirmed durability setting.",
+      "source": "MongoDB replication architecture and replica-set operational model",
       "source_url": "https://www.mongodb.com/docs/manual/replication/"
     },
     "eco_variable_transaction_cost": {
@@ -48,47 +48,40 @@
       "source_url": "https://www.mongodb.com/docs/manual/reference/write-concern/"
     },
     "eco_storage_footprint": {
-      "value": 60,
+      "value": 180,
       "unit": "GB",
       "class": "LOW",
       "evaluation_level": "mcc",
-      "source": "Framework baseline storage assumption for MongoDB MCC",
+      "method_note": "Baseline storage footprint for the adopted MCC, assuming 60 GB of replicated storage per node across a 3-node replica set.",
+      "source": "Framework MCC assumption: 3-node replica set with 60 GB of storage per node",
       "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-architectures/"
     },
     "ps_scalability": {
-      "value": 0.5,
-      "unit": "score_0_1",
-      "class": "MID",
-      "evaluation_level": "technology_native_operational",
-      "factors": {
-        "parallel_execution": {
-          "value": 1,
-          "motivation": "MongoDB supports concurrent execution of operations and general-purpose database workloads.",
-          "source": "MongoDB database performance overview",
-          "source_url": "https://www.mongodb.com/resources/basics/databases/database-performance"
-        },
-        "horizontal_partitioning": {
-          "value": 0,
-          "motivation": "MongoDB supports horizontal partitioning through sharding, but this capability is not native to the minimal replica-set architecture considered in the framework baseline and therefore does not characterize the base technology configuration used for comparison.",
-          "source": "MongoDB sharding documentation",
-          "source_url": "https://www.mongodb.com/docs/manual/sharding/"
-        },
-        "absence_of_global_serialization": {
-          "value": 1,
-          "motivation": "MongoDB does not rely on a globally serialized ledger ordering model.",
-          "source": "MongoDB replication architecture",
-          "source_url": "https://www.mongodb.com/docs/manual/replication/"
-        },
-        "scalable_coordination_model": {
-          "value": 0,
-          "motivation": "In the non-sharded replica-set architecture, write coordination remains centered on a primary node, so coordination is not structurally elastic at the technology baseline considered by the framework.",
-          "source": "MongoDB replication and sharding model",
-          "source_url": "https://www.mongodb.com/docs/manual/core/sharding-scaling-strategies/"
-        }
-      },
-      "source": "MongoDB replication and sharding model",
-      "source_url": "https://www.mongodb.com/docs/manual/sharding/"
+  "value": 0.0,
+  "unit": "score_0_1",
+  "class": "LOW",
+  "evaluation_level": "technology_native_operational",
+  "factors": {
+    "parallel_execution": {
+      "value": 0,
+      "motivation": "In the adopted replica-set baseline, MongoDB does not provide native parallel execution across independent execution domains; writes are accepted by a single primary node."
     },
+    "horizontal_partitioning": {
+      "value": 0,
+      "motivation": "The adopted Minimum Correctness Configuration excludes sharding, so no native horizontal workload partitioning is assumed in the benchmark baseline."
+    },
+    "absence_of_global_serialization": {
+      "value": 0,
+      "motivation": "In the adopted replica-set baseline, write ordering remains centralized through one elected primary rather than partitioned across multiple independent execution domains."
+    },
+    "scalable_coordination_model": {
+      "value": 0,
+      "motivation": "Under the MCC, write coordination is centered on a single primary and does not provide a positive structural scalability contribution via distributed execution partitioning or validator-level parallelism."
+    }
+  },
+  "source": "MongoDB replica-set MCC baseline (3-node replica set without sharding) as defined in the benchmark framework",
+  "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-architectures/"
+},
     "rci_tamper_evidence_auditability": {
       "value": 0.0,
       "unit": "score_0_1",
@@ -97,8 +90,8 @@
       "factors": {
         "append_only_structural_history": {
           "value": 0,
-          "motivation": "MongoDB records are mutable and the database is not structurally append-only at application-state level.",
-          "source_url": "https://www.mongodb.com/docs/manual/core/auditing/"
+          "motivation": "No protocol-native immutable append-only ledger is enforced; data can be updated or deleted and the oplog functions as a replication log rather than as a structurally tamper-evident ledger history.",
+          "source_url": "https://www.mongodb.com/docs/manual/replication/"
         },
         "cryptographic_linkage_between_records": {
           "value": 0,
@@ -107,16 +100,16 @@
         },
         "cryptographic_write_authentication": {
           "value": 0,
-          "motivation": "MongoDB provides authentication and authorization, but not intrinsic cryptographic attestation of each record write as a structural ledger property.",
+          "motivation": "MongoDB provides authentication and authorization, but not transaction-level cryptographic attestation of each record write as a structural ledger property.",
           "source_url": "https://www.mongodb.com/docs/manual/core/authentication/"
         },
         "independent_integrity_verification": {
           "value": 0,
-          "motivation": "There is no trustless independent multi-party verification model comparable to blockchain/DLT systems.",
+          "motivation": "There is no protocol-native independent integrity-verification mechanism comparable to distributed-ledger validation.",
           "source_url": "https://www.mongodb.com/docs/manual/replication/"
         }
       },
-      "source": "MongoDB auditing and authentication model",
+      "source": "MongoDB auditing, authentication, and replication model",
       "source_url": "https://www.mongodb.com/docs/manual/core/auditing/"
     },
     "rci_finality_rollback_resistance": {
@@ -128,17 +121,17 @@
       "factors": {
         "protocol_enforced_irreversible_commit": {
           "value": 0,
-          "motivation": "MongoDB does not provide protocol-enforced irreversible commit in the ledger sense; rollback scenarios remain possible.",
+          "motivation": "Irreversible commit is not structurally enforced in the adopted baseline configuration. Under the default w:1 write concern, the primary acknowledges writes before replication to secondaries is confirmed, so rollback remains possible under documented failure and election conditions.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-rollbacks/"
         },
         "multi_party_confirmation_requirement": {
           "value": 1,
-          "motivation": "With majority write concern, commit acknowledgment depends on multiple data-bearing members.",
+          "motivation": "The adopted replica-set architecture supports multi-node confirmation when stronger write concerns such as majority are used, even though this is not part of the throughput-oriented DOM baseline.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-write-concern/"
         },
         "absence_of_unilateral_rollback_capability": {
           "value": 0,
-          "motivation": "MongoDB documentation explicitly describes rollback scenarios in replica set failover conditions.",
+          "motivation": "Rollback scenarios remain possible under documented failover and replication conditions.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-rollbacks/"
         }
       },
@@ -150,21 +143,21 @@
       "unit": "score_0_1",
       "class": "MID",
       "evaluation_level": "technology_native_operational",
-      "configuration_note": "Score refers strictly to MCC with 3 data-bearing members in a standard replica set.",
+      "configuration_note": "Score refers strictly to the MCC with three data-bearing members in a standard replica set.",
       "factors": {
         "absence_of_single_writer_requirement": {
           "value": 0,
-          "motivation": "Only the primary receives write operations in a replica set.",
+          "motivation": "Only the elected primary receives write operations in a replica set.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-primary/"
         },
         "quorum_based_write_continuation": {
           "value": 1,
-          "motivation": "Replica set elections and write availability depend on majority/quorum semantics.",
+          "motivation": "Replica-set elections and write availability depend on majority/quorum semantics.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-write-concern/"
         },
         "automatic_write_continuation_mechanism": {
           "value": 1,
-          "motivation": "Replica sets provide automatic failover via election of a new primary.",
+          "motivation": "Replica sets provide automatic failover through election of a new primary after eligible failure scenarios.",
           "source_url": "https://www.mongodb.com/docs/manual/tutorial/deploy-replica-set/"
         },
         "multi_node_write_survivability": {
@@ -173,7 +166,7 @@
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-architectures/"
         }
       },
-      "source": "MongoDB replication and replica set architecture documentation",
+      "source": "MongoDB replication and replica-set architecture documentation",
       "source_url": "https://www.mongodb.com/docs/manual/replication/"
     },
     "ags_control_distribution_governance": {
@@ -184,7 +177,7 @@
       "factors": {
         "absence_of_single_entity_unilateral_state_authority": {
           "value": 0,
-          "motivation": "Replica sets are normally controlled administratively by a single organization.",
+          "motivation": "Replica sets are normally controlled administratively by a single organization or operator.",
           "source_url": "https://www.mongodb.com/docs/manual/replication/"
         },
         "structural_requirement_for_multi_entity_validation": {
@@ -194,16 +187,16 @@
         },
         "validator_admission_independence": {
           "value": 0,
-          "motivation": "Node membership is configured and controlled by the operator; there is no permissionless or independent validator admission.",
+          "motivation": "Node membership is configured and controlled by the operator; there is no permissionless or independently governed validator admission.",
           "source_url": "https://www.mongodb.com/docs/manual/tutorial/deploy-replica-set-with-keyfile-access-control/"
         },
         "absence_of_structurally_fixed_validator_set": {
           "value": 0,
-          "motivation": "The set of replica set members is explicitly administered and fixed by configuration choices.",
+          "motivation": "The set of replica-set members is explicitly administered and fixed by configuration choices.",
           "source_url": "https://www.mongodb.com/docs/manual/tutorial/deploy-replica-set/"
         }
       },
-      "source": "MongoDB replica set administration model",
+      "source": "MongoDB replica-set administration model",
       "source_url": "https://www.mongodb.com/docs/manual/tutorial/deploy-replica-set/"
     },
     "ags_identity_access_governance": {
@@ -232,29 +225,29 @@
       "source_url": "https://www.mongodb.com/docs/manual/core/authentication/"
     },
     "ags_collusion_resilience": {
-      "value": 0.33,
+      "value": 0.0,
       "unit": "score_0_1",
-      "class": "MID",
+      "class": "LOW",
       "evaluation_level": "technology_native_operational",
-      "configuration_note": "Score reflects technical majority semantics in a replica set, not decentralized governance across independent organizations.",
+      "configuration_note": "The score reflects the fact that the replica set remains under a single administrative domain. Majority election semantics do not imply collusion resilience across independent governance actors.",
       "factors": {
-        "non_unilateral_compromise_possible": {
+        "non_unilateral_compromise_requirement": {
           "value": 0,
-          "motivation": "The deployment is typically under one administrative domain, so unilateral organizational compromise remains plausible.",
+          "motivation": "A sufficiently privileged administrator or operator can unilaterally compromise the deployment, so non-unilateral compromise is not structurally required.",
           "source_url": "https://www.mongodb.com/docs/manual/replication/"
         },
         "majority_compromise_required": {
-          "value": 1,
-          "motivation": "Elections and stronger write guarantees rely on majority semantics among data-bearing members.",
+          "value": 0,
+          "motivation": "Replica-set majority semantics support elections and write availability, but they do not impose a majority compromise threshold against an administrator operating within the same administrative domain.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-write-concern/"
         },
         "supermajority_compromise_required": {
           "value": 0,
-          "motivation": "MongoDB replica set semantics do not require supermajority thresholds.",
+          "motivation": "No supermajority compromise threshold is structurally enforced by the architecture for administrative control over the system.",
           "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-write-concern/"
         }
       },
-      "source": "MongoDB replica set write concern and election model",
+      "source": "MongoDB replica-set write concern and election model",
       "source_url": "https://www.mongodb.com/docs/manual/core/replica-set-write-concern/"
     }
   }

@@ -215,6 +215,8 @@ table.innerHTML = `
 
 <th>${t({en:"Criterion",it:"Criterio"})}</th>
 
+<th>ID</th>
+
 <th>${t({en:"Type",it:"Tipo"})}</th>
 
 <th>${t({en:"Description",it:"Descrizione"})}</th>
@@ -295,6 +297,8 @@ for(const c of (criteria.criteria || []))
   tr.innerHTML=`
 
 <td><b>${criterionLabel(c)}</b></td>
+
+<td><code>${c.id}</code></td>
 
 <td><span class="badge">${c.measurement_type || ""}</span></td><td><span class="badge">${c.direction || c.type || ""}</span></td>
 
